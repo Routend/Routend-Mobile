@@ -32,6 +32,25 @@ export default class Signup extends React.Component {
   )
   }
 
+  createUser(email, password) {
+    var time = new Date();
+    return fetch('http://107.170.226.9:3000/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: email,
+        password: password,
+        address: 'address here',
+        email: email,
+        createdAt: time
+      })
+    })
+    .then((resp) => this.props.navigator.push(Router.getRoute('login')))
+    
+  }
+
   render() {
     return (
       <View
@@ -44,7 +63,7 @@ export default class Signup extends React.Component {
           <View style={{flex: 1.8, justifyContent: 'center', alignItems: 'center'}}>
               <LoginForm
               loginFb={() => console.log('login with facebook')}
-              onSubmit={(email, password) => this.props.navigator.push(Router.getRoute('login'))}
+              onSubmit={(email, password) => this.createUser(email, password)}
               error={false}
               errorMsg={'username or password incorrect'}
               style={{marginTop: 30}}

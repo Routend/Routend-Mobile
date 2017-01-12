@@ -33,7 +33,7 @@ class HomeScreen extends React.Component {
       date: moment().format("YYYY-MM-DD"),
       currentStart: 0,
       currentEnd: 0,
-      userId: 1,
+      userId: global.id,
       position: '',
       ready: false,
       tracked: [],

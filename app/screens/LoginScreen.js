@@ -14,6 +14,13 @@ import Router from '../navigation/Router';
 import { LoginFb } from 'react-native-uikit'
 
 export default class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: null
+    }
+  }
+
   static route = {
     navigationBar: {
       visible: false,
@@ -38,6 +45,7 @@ export default class Login extends React.Component {
       .then((data) => {
         data.forEach((el) => {
           if(el.password === password && el.email === email) {
+            global.id = el.id;
             this.props.navigator.push(Router.getRoute('rootNavigation'))
           }
         })
