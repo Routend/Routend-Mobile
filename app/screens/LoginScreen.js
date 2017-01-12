@@ -21,15 +21,30 @@ export default class Login extends React.Component {
   }
 
   renderRow (rowData, sectionID) {
-  return (
-    <ListItem
-      roundAvatar
-      key={sectionID}
-      title={rowData.name}
-      subtitle={rowData.subtitle}
-      avatar={{uri:rowData.avatar_url}}
-    />
-  )
+    return (
+      <ListItem
+        roundAvatar
+        key={sectionID}
+        title={rowData.name}
+        subtitle={rowData.subtitle}
+        avatar={{uri:rowData.avatar_url}}
+      />
+    )
+  }
+
+  fetchUsers(email, password) {
+    return fetch('http://107.170.226.9:3000/users')
+      .then((response) => response.json())
+      .then((data) => {
+        data.forEach((el) => {
+          if(el.password === password && el.email === email) {
+            this.props.navigator.push(Router.getRoute('rootNavigation'))
+          }
+        })
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   render() {
@@ -42,7 +57,8 @@ export default class Login extends React.Component {
           <View style={{flex: 1.8, justifyContent: 'center', alignItems: 'center'}}>
               <LoginForm
               loginFb={() => console.log('login with facebook')}
-              onSubmit={(email, password) => this.props.navigator.push(Router.getRoute('rootNavigation'))}
+              // onSubmit={(email, password) => this.props.navigator.push(Router.getRoute('rootNavigation'))}
+              onSubmit={(email, password) => this.fetchUsers(email, password)}
               error={false}
               errorMsg={'username or password incorrect'}
               style={{marginTop: 30}}
@@ -54,7 +70,7 @@ export default class Login extends React.Component {
               buttonText={'Login'}
               />
               <LoginFb
-              onPress={() => console.log('login with fb')}
+              onPress={() => this.fetchUsers()}
               style={{bottom: 20}}
               />
           </View>

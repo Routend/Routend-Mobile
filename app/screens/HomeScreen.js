@@ -21,7 +21,7 @@ import Router from '../navigation/Router';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
 import MapView from 'react-native-maps';
-import BackgroundGeolocation from "react-native-background-geolocation";
+// import BackgroundGeolocation from "react-native-background-geolocation";
 var moment = require('moment');
 
 // (<Image style={{height: 30, width: 100}} source={{uri: 'http://servicevirtualization.com/wp-content/uploads/2015/09/testing_graphic.jpg'}}></Image>)
@@ -56,44 +56,44 @@ class HomeScreen extends React.Component {
 
   componentWillMount() {
 
-    BackgroundGeolocation.on('location', function(location) {
-      console.log('- Location changed: ', location);
-    });
-    // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    // BackgroundGeolocation.on('motionchange', function(isMoving, location) {
-    //   if (isMoving) {
-    //       console.log('Device has just started MOVING', location);
-    //   } else {
-    //       console.log('Device has just STOPPED', location);
+    // BackgroundGeolocation.on('location', function(location) {
+    //   console.log('- Location changed: ', location);
+    // });
+    // // This handler fires when movement states changes (stationary->moving; moving->stationary)
+    // // BackgroundGeolocation.on('motionchange', function(isMoving, location) {
+    // //   if (isMoving) {
+    // //       console.log('Device has just started MOVING', location);
+    // //   } else {
+    // //       console.log('Device has just STOPPED', location);
+    // //   }
+    // // });
+    // // Now configure the plugin.
+    // BackgroundGeolocation.configure({
+    //   // Geolocation Config
+    //   desiredAccuracy: 0,
+    //   stationaryRadius: 25,
+    //   distanceFilter: 40,
+    //   // Activity Recognition
+    //   stopTimeout: 1,
+    //   // Application config
+    //   debug: true, // <-- enable for debug sounds & notifications
+    //   logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+    //   stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
+    //   startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+    //   // HTTP / SQLite config
+    //   // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
+    //   // autoSync: true,         // <-- POST each location immediately to server
+    //   // params: {               // <-- Optional HTTP params
+    //   //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+    //   // }
+    // }, function(state) {
+    //   console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+    //   if (!state.enabled) {
+    //     BackgroundGeolocation.start(function() {
+    //       console.log("- Start success");
+    //     });
     //   }
     // });
-    // Now configure the plugin.
-    BackgroundGeolocation.configure({
-      // Geolocation Config
-      desiredAccuracy: 0,
-      stationaryRadius: 25,
-      distanceFilter: 40,
-      // Activity Recognition
-      stopTimeout: 1,
-      // Application config
-      debug: true, // <-- enable for debug sounds & notifications
-      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
-      // HTTP / SQLite config
-      // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
-      // autoSync: true,         // <-- POST each location immediately to server
-      // params: {               // <-- Optional HTTP params
-      //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"
-      // }
-    }, function(state) {
-      console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-      if (!state.enabled) {
-        BackgroundGeolocation.start(function() {
-          console.log("- Start success");
-        });
-      }
-    });
 
     // BackgroundGeolocation.watchPosition(function(location) {
     //     console.log("- Watch position: ", location);
