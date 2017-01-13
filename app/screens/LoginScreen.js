@@ -40,19 +40,20 @@ export default class Login extends React.Component {
   }
 
   fetchUsers(email, password) {
-    return fetch('http://107.170.226.9:3000/users')
-      .then((response) => response.json())
-      .then((data) => {
-        data.forEach((el) => {
-          if(el.password === password && el.email === email) {
-            global.id = el.id;
-            this.props.navigator.push(Router.getRoute('rootNavigation'))
-          }
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return fetch(`http://107.170.226.9:3000/users?email=${email}&password=${password}`)
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data[0].id);
+          global.id = data[0].id;
+          this.props.navigator.push(Router.getRoute('rootNavigation'));
         })
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+        .catch((error) => {
+          console.error(error);
+        });
+    } else {
+      console.log('invalid email');
+    }
   }
 
   render() {

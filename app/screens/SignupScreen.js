@@ -33,21 +33,25 @@ export default class Signup extends React.Component {
   }
 
   createUser(email, password) {
-    var time = new Date();
-    return fetch('http://107.170.226.9:3000/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: email,
-        password: password,
-        address: 'address here',
-        email: email,
-        createdAt: time
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      var time = new Date();
+      return fetch('http://107.170.226.9:3000/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+          address: 'address here',
+          email: email,
+          createdAt: time
+        })
       })
-    })
-    .then((resp) => this.props.navigator.push(Router.getRoute('login')))
+      .then((resp) => this.props.navigator.push(Router.getRoute('login')))
+    } else {
+      console.log('not a valid email');
+    }
     
   }
 
