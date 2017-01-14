@@ -44,7 +44,7 @@ class TrackLocation extends React.Component {
 
   static route = {
     navigationBar: {
-      title: (<Text style={{color: 'white', fontSize: 15}}>Track a Place</Text>),
+      title: (<Text style={{color: 'white', fontSize: 15, fontWeight: 'bold'}}>TRACK A PLACE</Text>),
       backgroundColor: '#175785',
     },
   }
@@ -113,8 +113,8 @@ class TrackLocation extends React.Component {
                             src={data.url}
                             link={currentLocation}
                             radius={5}
-                            marginBottom={0}
-                            style={{marginTop: 1}}
+                            marginBottom={8}
+                            style={{marginTop: 0}}
                           />
                         </View>
                      )
@@ -126,15 +126,15 @@ class TrackLocation extends React.Component {
           this.setState({
             results:
             (
-                <View style={{marginLeft: 20, marginRight: 15}}>
+                <View style={{marginLeft: 20, marginRight: 15, marginBottom: 10}}>
                   <Card
                     onPress={() => console.log('card pressed')}
                     title={'Location'}
                     src={'http://searchengineland.com/figz/wp-content/seloads/2014/08/local-search-map-pin-ss-1920-800x450.jpg'}
                     link={currentLocation}
                     radius={5}
-                    marginBottom={0}
-                    style={{marginTop: 1}}
+                    marginBottom={8}
+                    style={{marginTop: 0}}
                   />
                 </View>
              )
@@ -202,10 +202,10 @@ class TrackLocation extends React.Component {
         predefinedPlaces={[]}
       />
 
+      <View style={[styles.card2, { backgroundColor: '#fff' }]}>
           <View>
             {this.state.results}
          </View>
-      <View style={[styles.card2, { backgroundColor: '#fff' }]}>
           <Text style={styles.title}>Save Location</Text>
           <Kohana
             style={{ backgroundColor: '#f7f7f7' }}
