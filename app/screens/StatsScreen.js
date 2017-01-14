@@ -4,26 +4,17 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableHighlight,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   Dimensions,
   Image,
 } from 'react-native';
-// import {
-//   ExponentLinksView,
-// } from '@exponent/samples';
 import AreaSpline from './js/charts/AreaSpline';
 import Pie from './js/charts/Pie';
 import Theme from './js/theme';
 import data from './resources/data';
+import Router from '../navigation/Router';
 
 export default class StatsScreen extends React.Component {
-  // static route = {
-  //   navigationBar: {
-  //     title: 'Links',
-  //   },
-  // }
 
   constructor(props) {
     super(props);
@@ -37,7 +28,7 @@ export default class StatsScreen extends React.Component {
 
   static route = {
     navigationBar: {
-      title: (<Text style={{color: 'white', fontSize: 15}}>Statistics</Text>),
+      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>STATISTICS</Text>),
       backgroundColor: '#175785',
     },
   }
@@ -60,7 +51,17 @@ export default class StatsScreen extends React.Component {
 
     return (
       <ScrollView>
+        <View style={{justifyContent: 'center', alignItems: 'center', top: 5}}>
+          <View style={{justifyContent: 'center', top: 5, alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
+              <TouchableOpacity onPress={() => { this.props.navigator.pop() }}>
+              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Logs</Text>
+            </TouchableOpacity>
+              <Text style={{color: "#D8D8D8"}}>   |   </Text>
+              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Graphs</Text>
+          </View>
+        </View>
         <View style={styles.container} >
+
           <Text style={styles.chart_title}>Time Spent Today</Text>
           <Pie
             pieWidth={150}
@@ -85,9 +86,10 @@ export default class StatsScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor:'whitesmoke',
-    marginTop: 21,
+    marginTop: 10,
   },
   chart_title : {
+    justifyContent: 'center',
     paddingTop: 15,
     textAlign: 'center',
     paddingBottom: 5,
