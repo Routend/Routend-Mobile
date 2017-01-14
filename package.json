@@ -11,7 +11,6 @@
     "apsl-react-native-button": "^3.0.2",
     "art": "^0.10.1",
     "babel-preset-react-native-stage-0": "^1.0.1",
-    "bcrypt": "^1.0.2",
     "d3": "^4.4.1",
     "d3-array": "^1.0.0",
     "d3-axis": "^1.0.0",
@@ -22,10 +21,13 @@
     "moment": "^2.17.1",
     "react": "15.4.2",
     "react-native": "0.39.0",
+    "react-native-aws3": "0.0.3",
     "react-native-background-geolocation": "^2.3.0",
     "react-native-datepicker": "^1.4.3",
     "react-native-elements": "^0.9.1",
+    "react-native-gifted-chat": "0.0.10",
     "react-native-google-places-autocomplete": "^1.2.6",
+    "react-native-image-picker": "^0.24.1",
     "react-native-maps": "^0.13.0",
     "react-native-textinput-effects": "^0.3.0",
     "react-native-uikit": "^0.1.6",
@@ -33,7 +35,8 @@
     "react-redux": "^5.0.1",
     "redux": "^3.6.0",
     "redux-logger": "^2.7.4",
-    "redux-thunk": "^2.1.0"
+    "redux-thunk": "^2.1.0",
+    "socket.io": "^1.7.2"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
@@ -43,5 +46,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./node_modules/@exponent/vector-icons/fonts"
+    ]
   }
 }

@@ -10,6 +10,10 @@ import TrackLocation from '../screens/TrackLocation';
 import Social from '../screens/SocialScreen';
 import Login from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
+import Messages from '../screens/Messages';
+import MatchScreen from '../screens/MatchScreen';
+import LogScreen from '../screens/LogScreen';
+import PrivateMessage from '../screens/PrivateMessage';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -20,4 +24,8 @@ export default createRouter(() => ({
   social: () => Social,
   login: () => Login,
   signup: () => SignupScreen,
+  messages: () => Messages,
+  matches: () => MatchScreen,
+  logs: () => LogScreen,
+  privatemsg: () => PrivateMessage,
 }));

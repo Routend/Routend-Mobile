@@ -4,11 +4,7 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-// import {
-//   ExponentConfigView,
-// } from '@exponent/samples';
 import { List, ListItem } from 'react-native-elements';
-// import { Font } from 'exponent';
 
 const list2 = [
   {
@@ -44,7 +40,7 @@ export default class SettingsScreen extends React.Component {
 
   static route = {
     navigationBar: {
-      title: (<Text style={{color: 'white', fontSize: 15}}>Settings</Text>),
+      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>SETTINGS</Text>),
       backgroundColor: '#175785',
     },
   }
@@ -71,7 +67,7 @@ export default class SettingsScreen extends React.Component {
     return (
       <ScrollView
         style={styles.container}
-        contentContainerStyle={this.props.route.getContentContainerStyle()}>
+        >
         <List>
           {
             list2.map((item, i) => (

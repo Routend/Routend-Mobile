@@ -43,18 +43,18 @@ export default class RootNavigation extends React.Component {
         </TabNavigationItem>
 
         <TabNavigationItem
-          id="stats"
-          renderIcon={isSelected => this._renderIcon('user-circle', isSelected)}>
-          <StackNavigation initialRoute="stats" />
+          id="logs"
+          renderIcon={isSelected => this._renderIcon('bar-chart', isSelected)}>
+          <StackNavigation initialRoute="logs" />
         </TabNavigationItem>
         <TabNavigationItem
-          id="tracklocation"
-          renderIcon={isSelected => this._renderIcon('feed', isSelected)}>
-          <StackNavigation initialRoute="tracklocation" />
+          id="matches"
+          renderIcon={isSelected => this._renderIcon('globe', isSelected)}>
+          <StackNavigation initialRoute="matches" />
         </TabNavigationItem>
         <TabNavigationItem
           id="social"
-          renderIcon={isSelected => this._renderIcon('globe', isSelected)}>
+          renderIcon={isSelected => this._renderIcon('user-circle', isSelected)}>
           <StackNavigation initialRoute="social" />
         </TabNavigationItem>
         <TabNavigationItem

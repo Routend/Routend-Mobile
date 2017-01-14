@@ -2,9 +2,6 @@ import React from 'react';
 // import Exponent from 'exponent';
 import {
   Image,
-  Linking,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,16 +9,14 @@ import {
   Dimensions,
 } from 'react-native';
 
-import { MonoText } from '../components/StyledText';
-// import { Components } from 'exponent';
+// import { MonoText } from '../components/StyledText';
 import { connect } from 'react-redux';
 import DatePicker from 'react-native-datepicker';
-import Button from 'apsl-react-native-button';
 import Router from '../navigation/Router';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
 import MapView from 'react-native-maps';
-// import BackgroundGeolocation from "react-native-background-geolocation";
+import BackgroundGeolocation from "react-native-background-geolocation";
 var moment = require('moment');
 
 // (<Image style={{height: 30, width: 100}} source={{uri: 'http://servicevirtualization.com/wp-content/uploads/2015/09/testing_graphic.jpg'}}></Image>)
@@ -31,6 +26,7 @@ class HomeScreen extends React.Component {
     super(props);
     this.state = {
       date: moment().format("YYYY-MM-DD"),
+      today: moment().format("YYYY-MM-DD"),
       currentStart: 0,
       currentEnd: 0,
       userId: global.id,
@@ -56,44 +52,139 @@ class HomeScreen extends React.Component {
 
   componentWillMount() {
 
-    // BackgroundGeolocation.on('location', function(location) {
-    //   console.log('- Location changed: ', location);
-    // });
-    // // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    // // BackgroundGeolocation.on('motionchange', function(isMoving, location) {
-    // //   if (isMoving) {
-    // //       console.log('Device has just started MOVING', location);
-    // //   } else {
-    // //       console.log('Device has just STOPPED', location);
-    // //   }
-    // // });
-    // // Now configure the plugin.
-    // BackgroundGeolocation.configure({
-    //   // Geolocation Config
-    //   desiredAccuracy: 0,
-    //   stationaryRadius: 25,
-    //   distanceFilter: 40,
-    //   // Activity Recognition
-    //   stopTimeout: 1,
-    //   // Application config
-    //   debug: true, // <-- enable for debug sounds & notifications
-    //   logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-    //   stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
-    //   startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
-    //   // HTTP / SQLite config
-    //   // url: 'http://posttestserver.com/post.php?dir=cordova-background-geolocation',
-    //   // autoSync: true,         // <-- POST each location immediately to server
-    //   // params: {               // <-- Optional HTTP params
-    //   //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"
-    //   // }
-    // }, function(state) {
-    //   console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
-    //   if (!state.enabled) {
-    //     BackgroundGeolocation.start(function() {
-    //       console.log("- Start success");
-    //     });
-    //   }
-    // });
+    console.log(this.props.navigator);
+
+    BackgroundGeolocation.on('location', function(location) {
+      console.log('- Location changed test: ', location);
+    });
+
+    BackgroundGeolocation.on("geofence", function(geofence) {
+      console.log('geofence', geofence);
+      fetch('http://posttestserver.com/post.php?dir=yisusfence', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(geofence)
+      })
+      .then((response) => response)
+        .then((data) => {
+          console.log('post data', data);
+        })
+        .catch((error) => {
+          console.warn(error);
+        }).done();
+    });
+
+    // Now configure the plugin.
+    BackgroundGeolocation.configure({
+      // Geolocation Config
+      desiredAccuracy: 0,
+      stationaryRadius: 25,
+      distanceFilter: 40,
+      // Activity Recognition
+      stopTimeout: 1,
+      // Application config
+      debug: true, // <-- enable for debug sounds & notifications
+      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
+      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+      // HTTP / SQLite config
+      url: 'http://posttestserver.com/post.php?dir=yisuslocation',
+      autoSync: true,         // <-- POST each location immediately to server
+      // params: {               // <-- Optional HTTP params
+      //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+      // }
+    }, function(state) {
+      console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
+      if (!state.enabled) {
+        BackgroundGeolocation.start(function() {
+          console.log("- Start success");
+        });
+      }
+    });
+
+    BackgroundGeolocation.addGeofence({
+        identifier: "Home",
+        radius: 50,
+        latitude: 37.7966940,
+        longitude: -122.3980750,
+        notifyOnEntry: true,
+        notifyOnExit: true,
+        notifyOnDwell: false,
+        loiteringDelay: 30000,  // 30 seconds
+    }, function() {
+        console.log("Successfully added geofence - 440 davis court");
+    }, function(error) {
+        console.warn("Failed to add geofence", error);
+    });
+
+    BackgroundGeolocation.addGeofence({
+        identifier: "Powell Bart",
+        radius: 50,
+        latitude: 37.784406,
+        longitude: -122.408331,
+        notifyOnEntry: true,
+        notifyOnExit: true,
+        notifyOnDwell: false,
+        loiteringDelay: 30000,  // 30 seconds
+    }, function() {
+        console.log("Successfully added geofence - Powell bart");
+    }, function(error) {
+        console.warn("Failed to add geofence", error);
+    });
+
+    BackgroundGeolocation.addGeofence({
+        identifier: "Hack Reactor",
+        radius: 50,
+        latitude: 37.783692,
+        longitude: -122.408967,
+        notifyOnEntry: true,
+        notifyOnExit: true,
+        notifyOnDwell: false,
+        loiteringDelay: 30000,  // 30 seconds
+    }, function() {
+        console.log("Successfully added geofence - Hack Reactor");
+    }, function(error) {
+        console.warn("Failed to add geofence", error);
+    });
+
+    BackgroundGeolocation.addGeofence({
+        identifier: "BOA Fin",
+        radius: 50,
+        latitude: 37.793686,
+        longitude: -122.397602,
+        notifyOnEntry: true,
+        notifyOnExit: true,
+        notifyOnDwell: false,
+        loiteringDelay: 30000,  // 30 seconds
+    }, function() {
+        console.log("Successfully added geofence - BOA Fin");
+    }, function(error) {
+        console.warn("Failed to add geofence", error);
+    });
+
+    BackgroundGeolocation.addGeofence({
+        identifier: "Bird Park",
+        radius: 50,
+        latitude: 37.795364,
+        longitude: -122.397957,
+        notifyOnEntry: true,
+        notifyOnExit: true,
+        notifyOnDwell: false,
+        loiteringDelay: 30000,  // 30 seconds
+    }, function() {
+        console.log("Successfully added geofence - Bird Park corner");
+    }, function(error) {
+        console.warn("Failed to add geofence", error);
+    });
+
+    BackgroundGeolocation.getGeofences(function(geofences) {
+        for (var n= 0,len=geofences.length;n<len;n++) {
+            console.log("Geofence: ", geofences[n].identifier, geofences[n].radius, geofences[n].latitude, geofences[n].longitude);
+        }
+    });
 
     // BackgroundGeolocation.watchPosition(function(location) {
     //     console.log("- Watch position: ", location);
@@ -203,7 +294,7 @@ class HomeScreen extends React.Component {
                     placeholder="select date"
                     format="YYYY-MM-DD"
                     minDate="2016-05-01"
-                    maxDate="2017-01-09"
+                    maxDate={this.state.today}
                     confirmBtnText="Confirm"
                     cancelBtnText="Cancel"
                     customStyles={{
@@ -215,7 +306,12 @@ class HomeScreen extends React.Component {
                         height: 23,
                       },
                       dateInput: {
-                        marginLeft: 32
+                        marginLeft: 32,
+                        borderWidth: 0,
+                        height: 25
+                      },
+                      dateText: {
+                        fontSize: 12
                       }
                     }}
                     onDateChange={(date) => {
@@ -256,9 +352,11 @@ class HomeScreen extends React.Component {
                 <View style={{top: (Dimensions.get('window').height * 0.026)}}>
                 <Text style={{fontSize: 20, fontWeight: '100',color: '#545454'}}> | </Text>
                 </View>
-                <Button onPress={() => { this.props.navigator.push(Router.getRoute('tracklocation')) }} style={{backgroundColor: '#fcfcfc', top: (Dimensions.get('window').height * 0.026), left: 8, height: 25, width: 100, borderRadius: 0, borderWidth: 0}} textStyle={{fontSize: 12}}>
-                  Track a Place
-                </Button>
+                <View style={{top: (Dimensions.get('window').height * 0.035), left: (Dimensions.get('window').width * 0.035), height: 25, width: 100}}>
+                <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('tracklocation')) }}>
+                  <Text style={{fontSize: 12}}>Track a Place</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
            </View>
         </View>
@@ -267,7 +365,6 @@ class HomeScreen extends React.Component {
     }
   }
 }
-
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(ActionCreators, dispatch);
