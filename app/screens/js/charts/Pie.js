@@ -143,11 +143,12 @@ class Pie extends React.Component {
 
 const styles = {
   container: {
-    margin: 20,
+    margin: (Dimensions.get('window').width * 0.07),
   },
   label: {
     fontSize: 14,
     marginTop: 5,
+    left: (Dimensions.get('window').width * 0.10),
     fontWeight: 'normal',
   }
 };
