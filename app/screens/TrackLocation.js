@@ -4,43 +4,31 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableHighlight,
-  TouchableOpacity,
   Dimensions,
+  AlertIOS,
 } from 'react-native';
-// import {
-//   ExponentLinksView,
-// } from '@exponent/samples';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-import DatePicker from 'react-native-datepicker';
 var {GooglePlacesAutocomplete} = require('react-native-google-places-autocomplete');
 import Router from '../navigation/Router';
 import { Kohana } from 'react-native-textinput-effects';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import Button from 'apsl-react-native-button';
-import { Button } from 'react-native-uikit';
-import { Card } from 'react-native-uikit';
+import { Button, Card } from 'react-native-uikit';
 
 class TrackLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userId: 1,
       date: "2016-05-15",
       currentAddress: '',
       results: (<View>
         <Text></Text>
         </View>),
       currentCoordinates: 0,
-
     }
-    // window.goBack = function() {
-    //   this.props.navigator.pop();
-    // }.bind(this);
   }
-
-
 
   static route = {
     navigationBar: {
@@ -50,6 +38,7 @@ class TrackLocation extends React.Component {
   }
 
   componentDidMount() {
+    console.log('props', this.props)
     this.setState({
       results: (<View>
         <Text>{this.state.currentAddress}</Text>
@@ -57,38 +46,37 @@ class TrackLocation extends React.Component {
     });
   }
 
-
-  searchPressed() {
-      console.log('props', this.props);
-      this.props.fetchCoord();
+  submitLocation() {
+    var that = this;
+    this.props.postLocation(this.state.userId, this.state.name, this.state.category, this.state.placeId, this.state.image, this.state.address, this.state.rating, this.state.latitude, this.state.longitude)
+    .then(() => { this.submitSuccess() });
   }
 
-  // _goBack() {
-  //   console.log('goBack was clicked', this)
-  //   // this.props.navigator.pop();
-  //   this.props.navigator.push(Router.getRoute('home'));
-  // }
+  submitSuccess() {
+    AlertIOS.alert('Success', 'Location has been saved!');
+    this.props.navigation.getNavigator('root').immediatelyResetStack([Router.getRoute('rootNavigation')], 0);
+  }
 
   render() {
     return (
       <ScrollView
         style={styles.container}
-        contentContainerStyle={this.props.route.getContentContainerStyle()}>
+        >
 
        <GooglePlacesAutocomplete
-        // onChangeText={() => {this.setState({results: (<View></View>) })}}
         placeholder='Search'
         minLength={2} // minimum length of text to search
         autoFocus={false}
         listViewDisplayed='auto'    // true/false/undefined
         fetchDetails={true}
-        // renderDescription={(row) => row.terms[0].value} // display street only
-        onPress={(data, details = null) => { // 'details' is provided when fetchDetails = true
+        onPress={(data, details = null) => {
           console.log('data', data);
           console.log('details', details);
-          // this.setState({
-          //   currentAddress: details.name + ', Neighborhood: ' + details.address_components[2].short_name
-          // });
+          this.state.latitude = details.geometry.location.lat;
+          this.state.longitude = details.geometry.location.lng;
+          this.state.placeId = details.place_id;
+          this.state.address = details.formatted_address;
+          this.state.rating = details.rating || 0;
           var currentLocation = '';
           var that = this;
           if (data.description === undefined) {
@@ -103,6 +91,7 @@ class TrackLocation extends React.Component {
           fetch(photo)
           .done(function(data) {
             console.log('data from google places image fetch', data);
+            that.state.image = data.url;
                 that.setState({
                     results:
                     (
@@ -122,7 +111,6 @@ class TrackLocation extends React.Component {
             });
           }
 
-
           this.setState({
             results:
             (
@@ -138,7 +126,7 @@ class TrackLocation extends React.Component {
                   />
                 </View>
              )
-    });
+          });
         }}
         getDefaultValue={() => {
           return ''; // text input default value
@@ -151,23 +139,13 @@ class TrackLocation extends React.Component {
         }}
         styles={{
             textInputContainer: {
-              // marginLeft: 1,
-              // marginRight: 1,
-              // borderRadius: 3,
             backgroundColor: '#fafafa',
             borderTopColor: '#fcfcfc',
             borderBottomColor: '#fcfcfc',
             bottom: 15,
-            // borderTopWidth: 0.1,
-            // borderBottomWidth: 0.1,
           },
           textInput: {
-            // marginLeft: 0,
-            // marginRight: 0,
-            // height: 50,
-            // color: '#000',
             fontSize: 13,
-            // fontStyle: 'italic',
           },
           description: {
             fontWeight: 'bold',
@@ -182,7 +160,6 @@ class TrackLocation extends React.Component {
             height: 0,
           }
         }}
-
         currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
         currentLocationLabel="Current Location"
         nearbyPlacesAPI='GoogleReverseGeocoding' // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
@@ -195,10 +172,7 @@ class TrackLocation extends React.Component {
           rankby: 'distance',
           types: 'food',
         }}
-
-
         filterReverseGeocodingByTypes={['street_address']} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-
         predefinedPlaces={[]}
       />
 
@@ -215,6 +189,7 @@ class TrackLocation extends React.Component {
             iconColor={'#f4d29a'}
             labelStyle={{ color: '#626262'}}
             inputStyle={{ color: '#000', fontSize: 14}}
+            onChangeText={ (text) => {this.setState({name: text})} }
           />
           <Kohana
             style={[styles.input, { backgroundColor: '#f7f7f7' }]}
@@ -225,9 +200,11 @@ class TrackLocation extends React.Component {
             iconColor={'#f4d29a'}
             labelStyle={{ color: '#626262' }}
             inputStyle={{ color: '#000', fontSize: 14}}
+            onChangeText={ (text) => {this.setState({category: text})} }
           />
           <View style={{alignItems: 'center', justifyContent: 'center'}}>
             <Button
+              onPress={() => { this.submitLocation() }}
               color={'#fff'}
               backgroundColor={'#0094EA'}
               style={{top: 5, width: (Dimensions.get('window').width * 0.9)}}
@@ -236,32 +213,16 @@ class TrackLocation extends React.Component {
             </Button>
           </View>
         </View>
-
       </ScrollView>
     );
   }
-
 }
-
-/*
-            <Button onPress={() => { this.props.navigator.push(Router.getRoute('home'))}}style={{backgroundColor: '#fcfcfc', top: 7, left: (Dimensions.get('window').width * 0.3), height: 35, width: 100, borderRadius: 2, borderColor: '#d3d3d3', shadowColor: '#000000', shadowRadius: 0.05, shadowOpacity: 0.6, shadowOffset: {height: 1, width: 2}}} textStyle={{fontSize: 10, fontWeight: 'bold'}}>
-            SUBMIT
-            </Button>
-            */
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    // backgroundColor: '#008ae6'
   },
-  //   content: {
-  //   // not cool but good enough to make all inputs visible when keyboard is active
-  //   paddingBottom: 300,
-  // },
-  // card1: {
-  //   paddingVertical: 16,
-  // },
   card2: {
     padding: 16,
   },
@@ -289,13 +250,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TrackLocation);
-
-// <View>
-//         <TouchableHighlight onPress={ () => this.searchPressed() }>
-//         <Text>Fetch</Text>
-//         </TouchableHighlight>
-//         </View>
-//         <View>
-//         <Text>Count: {this.props.AppState.recipeCount}</Text>
-//         <Text style={styles.title}>Search Location</Text>
-//         </View>

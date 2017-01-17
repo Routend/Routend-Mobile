@@ -8,24 +8,40 @@ export default class PrivateMessage extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      userId: 2
+      userId: 2,
+      userName: 'D Beast',
+      otherUser: this.props.route.params.idSender,
+      otherName: this.props.route.params.name,
     };
     // this.determineUser = this.determineUser.bind(this);
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
-    this._storeMessages = this._storeMessages.bind(this);
+    this.storeMessages = this.storeMessages.bind(this);
+  }
+
+  componentWillMount() {
+  }
+
+  componentDidMount() {
+    this.state.roomId = [this.state.userId, this.state.otherUser].sort(function(a, b) {
+      return a-b;
+    }).join('-');
     // client side, setup socket io client and room with id 1-2
     // this.socket = SocketIOClient('http://localhost:3000');
+    // jsonp false to fix debug issues
     this.socket = SocketIOClient('http://localhost:3000', {jsonp: false});
-    this.socket.emit('join', {id: '1-2'});
+    this.socket.emit('join', {id: this.state.roomId});
     // listen to message event for received messages.
     this.socket.on('message', this.onReceivedMessage);
     // this.determineUser();
   }
 
+  componentWillUnmount() {
+    this.socket.removeListener('message');
+  }
+
   onReceivedMessage(messages) {
-    console.log('message received', messages);
-    this._storeMessages(messages);
+    this.storeMessages(messages);
   }
 
   /**
@@ -34,19 +50,24 @@ export default class PrivateMessage extends React.Component {
    */
 
   onSend(messages=[]) {
+    messages[0].roomId = this.state.roomId;
+    messages[0].otherName = this.state.otherName;
+    messages[0].otherId = this.state.otherUser;
+    messages[0].currName = this.state.userName;
     this.socket.emit('message', messages[0]);
     // this.socket.emit('message', {id: '1-2'}, messages[0]);
     // this.socket.to('1-2').emit('message', messages[0]);
-    this._storeMessages(messages);
+    this.storeMessages(messages);
   }
 
-  static route = {
-    navigationBar: {
-      visible: true,
-      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>CHANNING TATUM</Text>),
-      backgroundColor: '#175785'
-    },
-  }
+   static route = {
+     navigationBar: {
+       title(params) {
+         return (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>{params.name.toUpperCase()}</Text>);
+       },
+       backgroundColor: '#25272A',
+     }
+   }
 
   render() {
     var user = { _id: this.state.userId || -1 };
@@ -60,7 +81,7 @@ export default class PrivateMessage extends React.Component {
     );
   }
 
-  _storeMessages(messages) {
+  storeMessages(messages) {
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),

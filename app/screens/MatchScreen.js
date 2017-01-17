@@ -6,9 +6,8 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import { Avatar } from 'react-native-uikit';
-import { ReviewCell } from 'react-native-uikit';
-import { RatingBox } from 'react-native-uikit';
+import { Avatar, ReviewCell, RatingBox } from 'react-native-uikit';
+import Router from '../navigation/Router';
 
 export default class MatchScreen extends React.Component {
   // state = {
@@ -40,7 +39,7 @@ export default class MatchScreen extends React.Component {
             src={'http://assets.nydailynews.com/polopoly_fs/1.1369168.1370966034!/img/httpImage/image.jpg_gen/derivatives/article_750/transformers.jpg'}
             size={(Dimensions.get('window').width * 0.21)}
             circle={true}
-            onPress={() => console.log('pressed')}
+            onPress={() => this.props.navigator.push(Router.getRoute('matchdetails', {name: 'testing'}))}
           />
           <Text style={{fontSize: 12, fontWeight: 'bold', opacity: 0.8}}>Megan</Text>
           </View>
@@ -76,14 +75,14 @@ export default class MatchScreen extends React.Component {
         <Text style={{left: (Dimensions.get('window').width * 0.03), top: (Dimensions.get('window').width * 0.005), fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>ACTIVITY SUGGESTIONS</Text>
         <View style={{padding: (Dimensions.get('window').width * 0.03)}}>
         <ReviewCell
-          title={'Gaucho'}
-          description={'Best american restaurant in sf that has the highest reviews'}
-          src={'https://lh5.googleusercontent.com/proxy/lvLgnhcoHke5BEhTG-bVydssje9jV_GytcBidVZh4ADXEuiybVwXN4mlIbgxxOKn2pF1uharMho8lAqGSXcMGKJMigr42UH_qZ1THp4bZplV7uyThhmwEtq38oAhKW7V5Y_6j46jAEkxkrewm9wrd_T4K2JBUw8=w271-h180'}
-          onPress={() => console.log('pressed')}
-          rating={4}
-          outOf={5}
+          title={'Chipotle'}
+          description={'865 Market St C10, San Francisco, CA 94103, USA'}
+          src={'https://lh5.googleusercontent.com/-TZ0b4mn-KdU/WAAyvGrlW1I/AAAAAAAAEp8/NRWexdAUWDcIdKsZ8kbEWVmWDB0gyhpZgCLIB/s1600-w400/'}
+          onPress={() => { this.props.navigator.push(Router.getRoute('locationdetails', {name: 'testing'})) }}
+          rating={0}
+          outOf={0}
         />
-        <RatingBox rating={3} outOf={5} style={{position: 'absolute', bottom: (Dimensions.get('window').height * 0.01), left: (Dimensions.get('window').width * 0.025)}}/>
+        <RatingBox rating={3.7} outOf={5} style={{position: 'absolute', bottom: (Dimensions.get('window').height * 0.01), left: (Dimensions.get('window').width * 0.025)}}/>
         </View>
         <View style={{padding: (Dimensions.get('window').width * 0.03)}}>
         <ReviewCell

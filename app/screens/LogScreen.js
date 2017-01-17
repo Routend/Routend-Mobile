@@ -9,6 +9,7 @@ import {
   Image,
 } from 'react-native';
 import Router from '../navigation/Router';
+import { Divider } from 'react-native-uikit'
 
 export default class LogScreen extends React.Component {
   // static route = {
@@ -44,6 +45,10 @@ export default class LogScreen extends React.Component {
         <View style={styles.container} >
 
           <Text style={styles.chart_title}>Time Spent Today</Text>
+
+          <Divider
+            color={'#eee'}
+          />
 
         </View>
       </ScrollView>

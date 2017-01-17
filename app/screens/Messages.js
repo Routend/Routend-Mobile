@@ -12,7 +12,11 @@ import { MessageList } from 'react-native-uikit'
 import { ProfileHeader } from 'react-native-uikit';
 import Router from '../navigation/Router';
 import { RNS3 } from 'react-native-aws3';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../actions';
 var ImagePicker = require('react-native-image-picker');
+var moment = require('moment');
 
 let iOptions = {
   title: 'Select Avatar',
@@ -29,13 +33,61 @@ let options = {
   successActionStatus: 201
 }
 
-export default class Messages extends React.Component {
+class Messages extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: 2,
+      messageList: [],
+      ready: false,
+      profileImg: 'http://aios2-staging.agentimage.com/j/jmlirealtor.com/htdocs/wp-content/uploads/2014/10/default-photo.jpg',
+    }
+  }
+
   static route = {
     navigationBar: {
       visible: false,
       // title: (<Text style={{color: 'white', fontSize: 15}}>Messages</Text>),
       // backgroundColor: '#175785'
     },
+  }
+
+  componentWillMount() {
+    var that = this;
+    this.props.fetchImage(this.state.userId)
+    .done(function() {
+      console.log('after fetch image inside done', that.props.currentImg);
+      that.setState({
+        profileImg: that.props.currentImg,
+      })
+    })
+  }
+
+  componentDidMount() {
+    this.fetchMsgs();
+  }
+
+  fetchMsgs() {
+    var that = this;
+    fetch(`http://127.0.0.1:3000/lastmessages?userId=${this.state.userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      for (var i = 0; i < resp.length; i++) {
+        that.state.messageList.push({
+          id: resp[i].idSender,
+          active: true,
+          user: resp[i].nameSender,
+          title: resp[i].text,
+          timestamp: moment(resp[i].createdAt).unix(),
+          index: i,
+        });
+      }
+    })
+    .done(function() {
+       that.setState({
+        ready: true
+      });
+    })
   }
 
   renderRow (rowData, sectionID) {
@@ -54,16 +106,6 @@ export default class Messages extends React.Component {
     ImagePicker.showImagePicker(iOptions, (response) => {
       console.log('Response = ', response);
 
-      // if (response.didCancel) {
-      //   console.log('User cancelled image picker');
-      // }
-      // else if (response.error) {
-      //   console.log('ImagePicker Error: ', response.error);
-      // }
-      // else if (response.customButton) {
-      //   console.log('User tapped custom button: ', response.customButton);
-      // }
-      // else {
         let source;
         source = { uri: 'data:image/jpeg;base64,' + response.data };
         console.log('image source', source);
@@ -79,22 +121,16 @@ export default class Messages extends React.Component {
           if (response.status !== 201)
             throw new Error("Failed to upload image to S3");
           console.log(response.body);
-          /**
-           * {
-           *   postResponse: {
-           *     bucket: "your-bucket",
-           *     etag : "9f620878e06d28774406017480a59fd4",
-           *     key: "uploads/image.png",
-           *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-           *   }
-           * }
-           */
         });
-      // }
     })
   }
 
   render() {
+    if (this.state.ready === false) {
+      return (
+        <View></View>
+      )
+    } else {
     return (
       <View
         style={styles.container}>
@@ -105,7 +141,7 @@ export default class Messages extends React.Component {
           />
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{fontSize: 15, color: '#404d5b', fontWeight: 'bold'}}>Gnus</Text>
-                <View style={{justifyContent: 'center', top: 5, alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
+                <View style={{justifyContent: 'center', top: 5, marginBottom: (Dimensions.get('window').height * 0.02), alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
                   <TouchableOpacity onPress={() => { this.props.navigator.pop() }}>
                   <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Friend List</Text>
                   </TouchableOpacity>
@@ -114,22 +150,34 @@ export default class Messages extends React.Component {
                 </View>
             </View>
           <MessageList
-            headerContent={<Text style={{textAlign:'center', fontSize: 20, padding: 10, backgroundColor: '#eee', marginBottom: 3}}>HEADER CONTENT</Text>}
-            items={[
-              {id:0, active:false, user: 'Jon Snow', title: 'Winter is Coming', message: 'Hey Rob, have you seen the weather report on tv ?', timestamp: 1460223614421},
-              {id:1, active:true, user: 'Ric Lowe', title: 'Guess what I found?', message: 'Hey Rob, checkout this story ?', timestamp: 1460221614421},
-              {id:2, active:true ,user: 'Jon Snow', title: 'title 3', message: 'Hey Rob, have you seen the weather report on tv ?', timestamp: 1460227614421},
-            ]}
-            footerContent={<Text style={{textAlign:'center', fontSize: 20, padding: 10, backgroundColor: '#eee'}}>FOOTER CONTENT</Text>}
-            onPress={(id) => this.props.navigator.push(Router.getRoute('privatemsg'))}
+            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES</Text>}
+            items={this.state.messageList}
+            // footerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>END</Text>}
+            onPress={(row) => this.props.navigator.push(Router.getRoute('privatemsg', {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}
           />
       </View>
-    );
+     );
+    }
   }
 }
+
+// this.props.navigation.getNavigator('root').immediatelyResetStack([Router.getRoute('rootNavigation'), Router.get('messages'), Router.get('privatemsg',  {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))], 2);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {
+    currentImg: state.getImage,
+    newImg: state.newImage
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Messages);
