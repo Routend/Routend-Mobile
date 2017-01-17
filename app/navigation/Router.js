@@ -14,6 +14,9 @@ import Messages from '../screens/Messages';
 import MatchScreen from '../screens/MatchScreen';
 import LogScreen from '../screens/LogScreen';
 import PrivateMessage from '../screens/PrivateMessage';
+import ProfileSettings from '../screens/ProfileSettings';
+import MatchDetails from '../screens/MatchDetails';
+import LocationDetails from '../screens/LocationDetails';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -28,4 +31,7 @@ export default createRouter(() => ({
   matches: () => MatchScreen,
   logs: () => LogScreen,
   privatemsg: () => PrivateMessage,
+  profilesettings: () => ProfileSettings,
+  matchdetails: () => MatchDetails,
+  locationdetails: () => LocationDetails,
 }));
