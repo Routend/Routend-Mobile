@@ -1,5 +1,4 @@
 import React from 'react';
-// import Exponent from 'exponent';
 import {
   Image,
   StyleSheet,
@@ -8,8 +7,6 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-
-// import { MonoText } from '../components/StyledText';
 import { connect } from 'react-redux';
 import DatePicker from 'react-native-datepicker';
 import Router from '../navigation/Router';
@@ -29,7 +26,7 @@ class HomeScreen extends React.Component {
       today: moment().format("YYYY-MM-DD"),
       currentStart: 0,
       currentEnd: 0,
-      userId: global.id,
+      userId: 3,
       position: '',
       ready: false,
       tracked: [],
@@ -45,14 +42,12 @@ class HomeScreen extends React.Component {
   static route = {
     navigationBar: {
       visible: true,
-      title: (<Text style={{color: 'white', fontSize: 15}}>Routend</Text>),
+      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>Routend</Text>),
       backgroundColor: '#175785'
     },
   }
 
   componentWillMount() {
-
-    console.log(this.props.navigator);
 
     BackgroundGeolocation.on('location', function(location) {
       console.log('- Location changed test: ', location);
@@ -80,7 +75,7 @@ class HomeScreen extends React.Component {
     // Now configure the plugin.
     BackgroundGeolocation.configure({
       // Geolocation Config
-      desiredAccuracy: 0,
+      desiredAccuracy: 100,
       stationaryRadius: 25,
       distanceFilter: 40,
       // Activity Recognition
@@ -107,7 +102,7 @@ class HomeScreen extends React.Component {
 
     BackgroundGeolocation.addGeofence({
         identifier: "Home",
-        radius: 50,
+        radius: 30,
         latitude: 37.7966940,
         longitude: -122.3980750,
         notifyOnEntry: true,
@@ -122,7 +117,7 @@ class HomeScreen extends React.Component {
 
     BackgroundGeolocation.addGeofence({
         identifier: "Powell Bart",
-        radius: 50,
+        radius: 30,
         latitude: 37.784406,
         longitude: -122.408331,
         notifyOnEntry: true,
@@ -137,7 +132,7 @@ class HomeScreen extends React.Component {
 
     BackgroundGeolocation.addGeofence({
         identifier: "Hack Reactor",
-        radius: 50,
+        radius: 30,
         latitude: 37.783692,
         longitude: -122.408967,
         notifyOnEntry: true,
@@ -152,7 +147,7 @@ class HomeScreen extends React.Component {
 
     BackgroundGeolocation.addGeofence({
         identifier: "BOA Fin",
-        radius: 50,
+        radius: 30,
         latitude: 37.793686,
         longitude: -122.397602,
         notifyOnEntry: true,
@@ -167,7 +162,7 @@ class HomeScreen extends React.Component {
 
     BackgroundGeolocation.addGeofence({
         identifier: "Bird Park",
-        radius: 50,
+        radius: 30,
         latitude: 37.795364,
         longitude: -122.397957,
         notifyOnEntry: true,
@@ -185,14 +180,6 @@ class HomeScreen extends React.Component {
             console.log("Geofence: ", geofences[n].identifier, geofences[n].radius, geofences[n].latitude, geofences[n].longitude);
         }
     });
-
-    // BackgroundGeolocation.watchPosition(function(location) {
-    //     console.log("- Watch position: ", location);
-    // }, function(errorCode) {
-    //     alert('An location error occurred: ' + errorCode);
-    // }, {
-    //     locationUpdateInterval: 5000    // <-- retrieve a location every 5s.
-    // });
 
     // this.state.date = moment().format("YYYY-MM-DD");
     this.state.currentStart = moment(this.state.date + ' 00').unix();
@@ -238,10 +225,6 @@ class HomeScreen extends React.Component {
         });
   }
 
-  // componentDidMount() {
-  //   setInterval(this._setPosition.bind(this), 5000);
-  // }
-
   _setPosition() {
     navigator.geolocation.getCurrentPosition((position) => {
       console.log(position);
@@ -282,11 +265,11 @@ class HomeScreen extends React.Component {
               <MapView.Polyline
               coordinates={this.state.test}
               strokeWidth={3}
-              strokeColor={'#b2b2ff'}
+              strokeColor={'#3299ff'}
               />
           </MapView.Animated>
           <View style={{flex: 1.2, position: 'absolute', zIndex: 1, top: (Dimensions.get('window').height * 0.686)}}>
-            <View style={{justifyContent: 'center', flexDirection: 'row', backgroundColor: '#fcfcfc', width: (Dimensions.get('window').width * 0.92), height: (Dimensions.get('window').height * 0.10), borderRadius: 2, left: (Dimensions.get('window').width * 0.04), borderWidth: 0.8, borderColor: '#d3d3d3', opacity: 0.97}}>
+            <View style={{justifyContent: 'center', flexDirection: 'row', backgroundColor: '#fcfcfc', width: (Dimensions.get('window').width * 0.92), height: (Dimensions.get('window').height * 0.10), borderRadius: 3, left: (Dimensions.get('window').width * 0.04), borderWidth: 0.8, borderColor: '#d3d3d3', opacity: 0.97, shadowRadius: 0.03, shadowOpacity: 0.2, shadowOffset: { width: 1, height: 1, }, }}>
                 <DatePicker
                     style={{height: 2000, width: 118, right: 8, top: (Dimensions.get('window').height * 0.015)}}
                     date={this.state.date}
@@ -311,7 +294,7 @@ class HomeScreen extends React.Component {
                         height: 25
                       },
                       dateText: {
-                        fontSize: 12
+                        fontSize: 13, color: '#404d5b', fontWeight: 'bold'
                       }
                     }}
                     onDateChange={(date) => {
@@ -354,7 +337,7 @@ class HomeScreen extends React.Component {
                 </View>
                 <View style={{top: (Dimensions.get('window').height * 0.035), left: (Dimensions.get('window').width * 0.035), height: 25, width: 100}}>
                 <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('tracklocation')) }}>
-                  <Text style={{fontSize: 12}}>Track a Place</Text>
+                  <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Track a Place</Text>
                   </TouchableOpacity>
                 </View>
               </View>
