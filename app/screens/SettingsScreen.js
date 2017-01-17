@@ -5,33 +5,35 @@ import {
   Text,
 } from 'react-native';
 import { List, ListItem } from 'react-native-elements';
+import Router from '../navigation/Router';
 
-const list2 = [
-  {
-    title: 'General',
-    icon: 'adjust'
-  },
-  {
-    title: 'Edit Profile',
-    icon: 'cloud-queue'
-  },
-  {
-    title: 'Notifications',
-    icon: 'alarm'
-  },
-  {
-    title: 'Data',
-    icon: 'airplanemode-active'
-  },
-  {
-    title: 'Help Center',
-    icon: 'business-center'
-  },
-  {
-    title: 'Report a Problem',
-    icon: 'build'
-  },
-]
+// const list2 = [
+//   {
+//     title: 'General',
+//     icon: 'adjust'
+//   },
+//   {
+//     title: 'Edit Profile',
+//     icon: 'cloud-queue',
+//     page: 'profilesettings'
+//   },
+//   {
+//     title: 'Notifications',
+//     icon: 'alarm'
+//   },
+//   {
+//     title: 'Data',
+//     icon: 'airplanemode-active'
+//   },
+//   {
+//     title: 'Help Center',
+//     icon: 'business-center'
+//   },
+//   {
+//     title: 'Report a Problem',
+//     icon: 'build'
+//   },
+// ]
 
 export default class SettingsScreen extends React.Component {
   // state = {
@@ -69,15 +71,42 @@ export default class SettingsScreen extends React.Component {
         style={styles.container}
         >
         <List>
-          {
-            list2.map((item, i) => (
-              <ListItem
-                key={i}
-                title={item.title}
-                leftIcon={{name: item.icon}}
-              />
-            ))
-          }
+          <ListItem
+            key={0}
+            title={'General'}
+            leftIcon={{name: 'adjust'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={1}
+            title={'Edit Profile'}
+            leftIcon={{name: 'cloud-queue'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={2}
+            title={'Notifications'}
+            leftIcon={{name: 'alarm'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={3}
+            title={'Data'}
+            leftIcon={{name: 'airplanemode-active'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={4}
+            title={'Help Center'}
+            leftIcon={{name: 'business-center'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={5}
+            title={'Report a Problem'}
+            leftIcon={{name: 'build'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
         </List>
       </ScrollView>
     );
