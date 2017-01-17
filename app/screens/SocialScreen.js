@@ -12,6 +12,9 @@ import { List, ListItem } from 'react-native-elements';
 import { ProfileHeader } from 'react-native-uikit';
 import Router from '../navigation/Router';
 import { RNS3 } from 'react-native-aws3';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../actions';
 var ImagePicker = require('react-native-image-picker');
 
 let iOptions = {
@@ -48,7 +51,7 @@ const list = [
   {
     name: 'Michael Dwyer',
     avatar_url: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0NjM2MTE5M15BMl5BanBnXkFtZTcwODIxMzcyNw@@._V1_UX214_CR0,0,214,317_AL_.jpg',
-    subtitle: 'Magneto FTW'
+    subtitle: ('Magneto FTWWWWWWWWWWWWWWWWWWWWWWWWWWWWW'.slice(0, 20) + '...')
   },
   {
     name: 'Kanye South',
@@ -62,13 +65,32 @@ const list = [
   }
 ]
 
-export default class Social extends React.Component {
+class Social extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: 1,
+      profileImg: 'http://aios2-staging.agentimage.com/j/jmlirealtor.com/htdocs/wp-content/uploads/2014/10/default-photo.jpg',
+    }
+  }
+
   static route = {
     navigationBar: {
       visible: false,
       // title: (<Text style={{color: 'white', fontSize: 15}}>Friend List</Text>),
       // backgroundColor: '#175785'
     },
+  }
+
+  componentWillMount() {
+    var that = this;
+    this.props.fetchImage(this.state.userId)
+    .done(function() {
+      console.log('after fetch image inside done', that.props.currentImg);
+      that.setState({
+        profileImg: that.props.currentImg,
+      })
+    })
   }
 
   renderRow (rowData, sectionID) {
@@ -84,19 +106,9 @@ export default class Social extends React.Component {
   }
 
   choosePhoto() {
+    var that = this;
     ImagePicker.showImagePicker(iOptions, (response) => {
       console.log('Response = ', response);
-
-      // if (response.didCancel) {
-      //   console.log('User cancelled image picker');
-      // }
-      // else if (response.error) {
-      //   console.log('ImagePicker Error: ', response.error);
-      // }
-      // else if (response.customButton) {
-      //   console.log('User tapped custom button: ', response.customButton);
-      // }
-      // else {
         let source;
         source = { uri: 'data:image/jpeg;base64,' + response.data };
         console.log('image source', source);
@@ -109,19 +121,15 @@ export default class Social extends React.Component {
         }
 
         RNS3.put(file, options).then(response => {
-          if (response.status !== 201)
-            throw new Error("Failed to upload image to S3");
+          // if (response.status !== 201)
+          //   throw new Error("Failed to upload image to S3");
           console.log(response.body);
-          /**
-           * {
-           *   postResponse: {
-           *     bucket: "your-bucket",
-           *     etag : "9f620878e06d28774406017480a59fd4",
-           *     key: "uploads/image.png",
-           *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-           *   }
-           * }
-           */
+          that.props.postImage(that.state.userId, response.body.postResponse.location)
+          .done(function() {
+            that.setState({
+              profileImg: that.newImage
+            });
+          });
         });
       // }
     })
@@ -132,7 +140,7 @@ export default class Social extends React.Component {
       <View
         style={styles.container}>
           <ProfileHeader
-          profileImg={'http://images.hngn.com/data/thumbs/full/50109/650/0/0/0/arrow.png'}
+          profileImg={this.state.profileImg}
           backgroundImg={'http://download.4-designer.com/files/20130905/Creative-graphics-background-vector-material-49766.jpg'}
           onPress={() => { this.choosePhoto() }}
           />
@@ -170,3 +178,16 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {
+    currentImg: state.getImage,
+    newImg: state.newImage
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Social);
