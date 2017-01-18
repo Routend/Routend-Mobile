@@ -69,7 +69,8 @@ class Social extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 1,
+      userId: 3,
+      ready: false,
       profileImg: 'http://aios2-staging.agentimage.com/j/jmlirealtor.com/htdocs/wp-content/uploads/2014/10/default-photo.jpg',
     }
   }
@@ -84,14 +85,25 @@ class Social extends React.Component {
 
   componentWillMount() {
     var that = this;
-    this.props.fetchImage(this.state.userId)
-    .done(function() {
-      console.log('after fetch image inside done', that.props.currentImg);
-      that.setState({
-        profileImg: that.props.currentImg,
-      })
+
+    // this.props.fetchImage(this.state.userId)
+    // .done(function() {
+    //   console.log('after fetch image inside done', that.props.currentImg);
+    //   that.setState({
+    //     profileImg: that.props.currentImg,
+    //   })
+    // })
+
+    this.props.fetchMatches(this.state.userId)
+    .then(function() {
+              that.setState({
+                ready: true
+              })
     })
   }
+
+  // componentDidMount() {
+  // }
 
   renderRow (rowData, sectionID) {
     return (
@@ -136,6 +148,11 @@ class Social extends React.Component {
   }
 
   render() {
+    if (this.state.ready === false) {
+      return (
+        <View></View>
+      )
+    } else {
     return (
       <View
         style={styles.container}>
@@ -156,20 +173,21 @@ class Social extends React.Component {
             </View>
           <List containerStyle={{marginBottom: 20}}>
           {
-            list.map((l, i) => (
+            this.props.getMatches.map((l, i) => (
               <ListItem
                 roundAvatar
-                onPress={() => console.log('something')}
-                avatar={l.avatar_url}
+                onPress={ () => this.props.navigator.push(Router.getRoute('privatemsg', {name: (l.first_name + ' ' + l.last_name), idSender: l.id_users})) }
+                avatar={l.image}
                 key={i}
-                title={l.name}
-                subtitle={l.subtitle}
+                title={l.first_name}
+                subtitle={l.status}
               />
             ))
           }
           </List>
       </View>
     );
+  }
   }
 }
 
@@ -186,7 +204,11 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     currentImg: state.getImage,
-    newImg: state.newImage
+    newImg: state.newImage,
+    getMatches: state.getMatches
+    // matchProfile: state.getProfile,
+    // matchStatus: state.getStatus,
+    // matchImage: state.getImage,
   }
 }
 
