@@ -20,7 +20,7 @@ class TrackLocation extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 1,
+      userId: 3,
       date: "2016-05-15",
       currentAddress: '',
       results: (<View>
