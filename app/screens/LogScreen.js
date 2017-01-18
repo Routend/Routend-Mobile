@@ -49,6 +49,26 @@ export default class LogScreen extends React.Component {
           <Divider
             color={'#eee'}
           />
+          <View></View>
+
+                      <View style={{backgroundColor: '#fcfcfc', width: (Dimensions.get('window').width * 0.88), height: (Dimensions.get('window').height * 0.80), borderRadius: 3, left: (Dimensions.get('window').width * 0.06), borderWidth: 0.8, borderColor: '#d3d3d3', opacity: 0.97, shadowRadius: 0.03, shadowOpacity: 0.2, shadowOffset: { width: 1, height: 1, }, }}>
+                      <View style={{justifyContent: 'center', flexDirection: 'row', alignItems: 'center'}}>
+                      <Text>Category:</Text>
+                      <Text>Time Spent</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', }}>
+                      <Text>Gym</Text>
+                      <Text>4 Hours</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', }}>
+                      <Text>Home</Text>
+                      <Text>10 Hours</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', }}>
+                      <Text>Work</Text>
+                      <Text>8 Hours</Text>
+                      </View>
+                      </View>
 
         </View>
       </ScrollView>

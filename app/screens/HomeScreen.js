@@ -48,6 +48,7 @@ class HomeScreen extends React.Component {
   }
 
   componentWillMount() {
+    var that = this;
 
     BackgroundGeolocation.on('location', function(location) {
       console.log('- Location changed test: ', location);
@@ -86,7 +87,7 @@ class HomeScreen extends React.Component {
       stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
       startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
       // HTTP / SQLite config
-      url: 'http://posttestserver.com/post.php?dir=yisuslocation',
+      url: 'http://107.170.226.9:3000/coordinates?id_users=' + that.state.userId,
       autoSync: true,         // <-- POST each location immediately to server
       // params: {               // <-- Optional HTTP params
       //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"

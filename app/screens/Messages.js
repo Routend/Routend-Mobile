@@ -8,8 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import { MessageList } from 'react-native-uikit'
-import { ProfileHeader } from 'react-native-uikit';
+import { MessageList, ProfileHeader, Time } from 'react-native-uikit'
 import Router from '../navigation/Router';
 import { RNS3 } from 'react-native-aws3';
 import { connect } from 'react-redux';
@@ -54,17 +53,18 @@ class Messages extends React.Component {
 
   componentWillMount() {
     var that = this;
-    this.props.fetchImage(this.state.userId)
-    .done(function() {
-      console.log('after fetch image inside done', that.props.currentImg);
-      that.setState({
-        profileImg: that.props.currentImg,
-      })
-    })
+    // this.props.fetchImage(this.state.userId)
+    // .done(function() {
+    //   console.log('after fetch image inside done', that.props.currentImg);
+    //   that.setState({
+    //     profileImg: that.props.currentImg,
+    //   })
+    // })
   }
 
   componentDidMount() {
-    this.fetchMsgs();
+    this.fetchMsgs()
+    console.log(this.state.messageList);
   }
 
   fetchMsgs() {
@@ -78,7 +78,7 @@ class Messages extends React.Component {
           active: true,
           user: resp[i].nameSender,
           title: resp[i].text,
-          timestamp: moment(resp[i].createdAt).unix(),
+          timestamp: (moment(resp[i].createdAt).valueOf()),
           index: i,
         });
       }
@@ -150,7 +150,7 @@ class Messages extends React.Component {
                 </View>
             </View>
           <MessageList
-            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES</Text>}
+            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES {moment(this.state.messageList[0].createdAt).unix()}</Text>}
             items={this.state.messageList}
             // footerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>END</Text>}
             onPress={(row) => this.props.navigator.push(Router.getRoute('privatemsg', {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}

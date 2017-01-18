@@ -129,6 +129,7 @@ export default class LocationDetails extends React.Component {
           <Text style={{top: (Dimensions.get('window').width * 0.02), fontSize: 11, color: '#404d5b', fontWeight: 'bold'}}>(415) 500-4491</Text>
           <Text style={{top: (Dimensions.get('window').width * 0.02), fontSize: 11, color: '#404d5b', fontWeight: 'bold'}}>865 Market St C10, San Francisco, CA 94103, USA</Text>
         </View>
+
         <View style={{top: (Dimensions.get('window').width * 0.03)}}>
           <GalleryOffset
             imagesArray={[

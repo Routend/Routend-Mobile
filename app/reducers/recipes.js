@@ -36,6 +36,24 @@ export const getImage = createReducer([], {
 });
 
 
+export const getMatches = createReducer([], {
+    [types.GET_MATCHES](state, action) {
+        return action.users;
+    }
+});
+
+export const getProfile = createReducer([], {
+    [types.GET_PROFILE](state, action) {
+        return action.user;
+    }
+});
+
+export const getStatus = createReducer([], {
+    [types.GET_STATUS](state, action) {
+        return action.user;
+    }
+});
+
 export const testCount = createReducer([], {
   // [types.SET_SEARCHED_RECIPES](state, action) {
   //   return action.recipes.length;
