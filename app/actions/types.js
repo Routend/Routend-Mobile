@@ -9,3 +9,9 @@ export const GET_IMAGES = 'GET_IMAGES';
 export const NEW_PLACES = 'GET_PLACES';
 
 export const NEW_IMAGES = 'NEW_IMAGES';
+
+export const GET_MATCHES = 'GET_MATCHES';
+
+export const GET_PROFILE = 'GET_PROFILE';
+
+export const GET_STATUS = 'GET_STATUS';
