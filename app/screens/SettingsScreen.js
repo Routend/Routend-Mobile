@@ -91,20 +91,26 @@ export default class SettingsScreen extends React.Component {
           />
           <ListItem
             key={3}
-            title={'Data'}
-            leftIcon={{name: 'airplanemode-active'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
-          />
-          <ListItem
-            key={4}
             title={'Help Center'}
             leftIcon={{name: 'business-center'}}
             onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
           />
           <ListItem
-            key={5}
+            key={4}
             title={'Report a Problem'}
+            leftIcon={{name: 'report-problem'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={5}
+            title={'Privacy Policy'}
             leftIcon={{name: 'build'}}
+            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+          />
+          <ListItem
+            key={6}
+            title={'Log Out'}
+            leftIcon={{name: 'cancel'}}
             onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
           />
         </List>
