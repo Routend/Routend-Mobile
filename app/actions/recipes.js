@@ -119,6 +119,59 @@ export function testy({ test }) {
   }
 }
 
+export function fetchMatches(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://107.170.226.9:3000/matches?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      dispatch(userMatches({users: resp}));
+    })
+  }
+}
+
+export function userMatches({ users }) {
+  return {
+    type: types.GET_MATCHES,
+    users
+  }
+}
+
+export function fetchProfile(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://107.170.226.9:3000/profiles?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(userProfile({user: resp}));
+    })
+  }
+}
+
+export function userProfile({ user }) {
+  return {
+    type: types.GET_PROFILE,
+    user
+  }
+}
+
+export function fetchStatus(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://107.170.226.9:3000/status?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(userStatus({user: resp}));
+    })
+  }
+}
+
+export function userStatus({ user }) {
+  return {
+    type: types.GET_STATUS,
+    user
+  }
+}
+
 // { recipes } = (args)  and inside args.recipes  === {recipes: recipes} inside return statement
 // export function setSearchedRecipes( { recipes } ) {
 //   return {
