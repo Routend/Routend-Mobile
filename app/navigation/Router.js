@@ -17,6 +17,10 @@ import PrivateMessage from '../screens/PrivateMessage';
 import ProfileSettings from '../screens/ProfileSettings';
 import MatchDetails from '../screens/MatchDetails';
 import LocationDetails from '../screens/LocationDetails';
+import NotificationSettings from '../screens/NotificationSettings';
+import HelpCenter from '../screens/HelpCenter';
+import PrivacyPolicy from '../screens/PrivacyPolicy';
+import ReportProblems from '../screens/ReportProblems';
 
 export default createRouter(() => ({
   home: () => HomeScreen,
@@ -34,4 +38,8 @@ export default createRouter(() => ({
   profilesettings: () => ProfileSettings,
   matchdetails: () => MatchDetails,
   locationdetails: () => LocationDetails,
+  notification: () => NotificationSettings,
+  helpcenter: () => HelpCenter,
+  privacypolicy: () => PrivacyPolicy,
+  reportproblems: () => ReportProblems,
 }));
