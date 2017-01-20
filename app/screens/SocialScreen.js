@@ -27,43 +27,10 @@ let options = {
   keyPrefix: "images/",
   bucket: "routend",
   region: "us-west-1",
-  accessKey: "API KEY",
-  secretKey: "API KEy",
+  accessKey: "AKIAJ3SMBHUDIYKY46LA",
+  secretKey: "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",
   successActionStatus: 201
 }
-
-const list = [
-  {
-    name: 'Kanye East',
-    avatar_url: 'http://i0.kym-cdn.com/photos/images/newsfeed/000/470/860/69d.jpeg',
-    subtitle: 'East Asia'
-  },
-  {
-    name: 'Kanye West',
-    avatar_url: 'http://www.relatably.com/m/img/kanye-west-memes-tumblr/kanye-west.jpg',
-    subtitle: 'The OG'
-  },
-  {
-    name: 'Steve Graves',
-    avatar_url: 'http://i0.kym-cdn.com/entries/icons/original/000/020/253/gravescigar.jpg',
-    subtitle: 'League of Legos'
-  },
-  {
-    name: 'Michael Dwyer',
-    avatar_url: 'https://images-na.ssl-images-amazon.com/images/M/MV5BMTk0NjM2MTE5M15BMl5BanBnXkFtZTcwODIxMzcyNw@@._V1_UX214_CR0,0,214,317_AL_.jpg',
-    subtitle: ('Magneto FTWWWWWWWWWWWWWWWWWWWWWWWWWWWWW'.slice(0, 20) + '...')
-  },
-  {
-    name: 'Kanye South',
-    avatar_url: 'http://i1.kym-cdn.com/photos/images/facebook/000/273/972/7b3.jpg',
-    subtitle: 'South West'
-  },
-  {
-    name: 'Kanye North',
-    avatar_url: 'http://www.freakingnews.com/pictures/81000/Kanye-West-Chin-Head--81349.jpg',
-    subtitle: 'North Pole'
-  }
-]
 
 class Social extends React.Component {
   constructor(props) {
@@ -71,7 +38,7 @@ class Social extends React.Component {
     this.state = {
       userId: 3,
       ready: false,
-      profileImg: 'http://aios2-staging.agentimage.com/j/jmlirealtor.com/htdocs/wp-content/uploads/2014/10/default-photo.jpg',
+      profileImg: this.props.currUser.image,
     }
   }
 
@@ -84,15 +51,8 @@ class Social extends React.Component {
   }
 
   componentWillMount() {
+    console.log(this.props);
     var that = this;
-
-    // this.props.fetchImage(this.state.userId)
-    // .done(function() {
-    //   console.log('after fetch image inside done', that.props.currentImg);
-    //   that.setState({
-    //     profileImg: that.props.currentImg,
-    //   })
-    // })
 
     this.props.fetchMatches(this.state.userId)
     .then(function() {
@@ -128,7 +88,7 @@ class Social extends React.Component {
         let file = {
           // `uri` can also be a file system path (i.e. file://)
           uri: source,
-          name: (Math.random().toString(36).substr(2, 10) + ".jpg"),
+          name: (Math.random().toString(36).substr(2, 15) + ".jpg"),
           type: "image/jpg"
         }
 
@@ -139,7 +99,7 @@ class Social extends React.Component {
           that.props.postImage(that.state.userId, response.body.postResponse.location)
           .done(function() {
             that.setState({
-              profileImg: that.newImage
+              profileImg: response.body.postResponse.location
             });
           });
         });
@@ -166,7 +126,7 @@ class Social extends React.Component {
                 <View style={{justifyContent: 'center', top: 5, alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
                   <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Friend List</Text>
                   <Text style={{color: "#D8D8D8"}}>   |   </Text>
-                  <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('messages')) }}>
+                  <TouchableOpacity onPress={() => { this.props.navigator.replace(Router.getRoute('messages')) }}>
                   <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Messages</Text>
                   </TouchableOpacity>
                 </View>
@@ -176,7 +136,7 @@ class Social extends React.Component {
             this.props.getMatches.map((l, i) => (
               <ListItem
                 roundAvatar
-                onPress={ () => this.props.navigator.push(Router.getRoute('privatemsg', {name: (l.first_name + ' ' + l.last_name), idSender: l.id_users})) }
+                onPress={ () => this.props.navigator.replace(Router.getRoute('privatemsg', {name: (l.first_name + ' ' + l.last_name), idSender: l.id_users})) }
                 avatar={l.image}
                 key={i}
                 title={l.first_name}
@@ -205,7 +165,8 @@ function mapStateToProps(state) {
   return {
     currentImg: state.getImage,
     newImg: state.newImage,
-    getMatches: state.getMatches
+    getMatches: state.getMatches,
+    currUser: state.currentUserDetails[state.currentUserDetails.length - 1],
     // matchProfile: state.getProfile,
     // matchStatus: state.getStatus,
     // matchImage: state.getImage,
