@@ -49,8 +49,8 @@ export function newPlace({ places }) {
 
 export function postImage(id, url) {
   return (dispatch, getState) => {
-    return fetch('http://107.170.226.9:3000/images', {
-      method: 'POST',
+    return fetch('http://107.170.226.9:3000/profiles', {
+      method: 'PUT',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -68,6 +68,13 @@ export function postImage(id, url) {
   }
 }
 
+export function newImage({ image }) {
+  return {
+    type: types.NEW_IMAGES,
+    image
+  }
+}
+
 export function fetchImage(userId) {
   return (dispatch, getState) => {
     return fetch(`http://107.170.226.9:3000/images?id_users=${userId}`)
@@ -79,12 +86,6 @@ export function fetchImage(userId) {
   }
 }
 
-export function newImage({ image }) {
-  return {
-    type: types.NEW_IMAGES,
-    image
-  }
-}
 
 export function getImage({ image }) {
   return {
@@ -168,6 +169,104 @@ export function fetchStatus(userId) {
 export function userStatus({ user }) {
   return {
     type: types.GET_STATUS,
+    user
+  }
+}
+
+export function fetchLocationMatches(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://45.55.24.84:3000/locations?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(locationMatches({locations: resp}));
+    })
+  }
+}
+
+export function locationMatches({ locations }) {
+  return {
+    type: types.GET_LOCATION_MATCHES,
+    locations
+  }
+}
+
+export function fetchLocationDetails(placeId) {
+  return (dispatch, getState) => {
+    return fetch(`https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=AIzaSyCQiHH0c64tBC6zOlwm7ViYpCulVVtSuSU`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(locationDetails({location: resp}));
+    })
+  }
+}
+
+export function locationDetails({ location }) {
+  return {
+    type: types.GET_LOCATION_DETAILS,
+    location
+  }
+}
+
+export function fetchMatchSuggestions(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://45.55.24.84:3000/users?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(matchDetails({users: resp}));
+    })
+  }
+}
+
+export function matchDetails({ users }) {
+  return {
+    type: types.GET_MATCH_DETAILS,
+    users
+  }
+}
+
+export function postProfile(id, firstName, lastName, gender, city, state, image, status) {
+  return (dispatch, getState) => {
+    return fetch('http://107.170.226.9:3000/profiles', {
+      method: 'PUT',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id_users: id,
+        first_name: firstName,
+        last_name: lastName,
+        gender: gender,
+        city: city,
+        state: state,
+        image: image,
+        status: status,
+      })
+    })
+    then((resp) => resp.json())
+    .then(resp => {
+      console.log('Profile Updated!', resp);
+    })
+  }
+}
+
+export function getCurrentUser(userId) {
+  return (dispatch, getState) => {
+    return fetch(`http://107.170.226.9:3000/profiles?id_users=${userId}`)
+    .then((resp) => resp.json())
+    .then(resp => {
+      // console.log('api respon', resp);
+      dispatch(currentUser({user: resp}));
+    })
+  }
+}
+
+export function currentUser({ user }) {
+  return {
+    type: types.GET_CURRENT_USER,
     user
   }
 }

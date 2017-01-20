@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import SocketIOClient from 'socket.io-client';
 import { GiftedChat } from 'react-native-gifted-chat';
+import Router from '../navigation/Router';
+import { withNavigation } from '@exponent/ex-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../actions';
 
-export default class PrivateMessage extends React.Component {
+class PrivateMessage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,13 +28,14 @@ export default class PrivateMessage extends React.Component {
   }
 
   componentDidMount() {
+    console.log('did mount', this.props);
     this.state.roomId = [this.state.userId, this.state.otherUser].sort(function(a, b) {
       return a-b;
     }).join('-');
     // client side, setup socket io client and room with id 1-2
     // this.socket = SocketIOClient('http://localhost:3000');
     // jsonp false to fix debug issues
-    this.socket = SocketIOClient('http://localhost:3000', {jsonp: false});
+    this.socket = SocketIOClient('http://138.197.202.196:3000', {jsonp: false});
     this.socket.emit('join', {id: this.state.roomId});
     // listen to message event for received messages.
     this.socket.on('message', this.onReceivedMessage);
@@ -66,11 +72,14 @@ export default class PrivateMessage extends React.Component {
          return (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>{params.name.toUpperCase()}</Text>);
        },
        backgroundColor: '#25272A',
+       renderLeft() {
+        return (<NavigationBackButton />);
+       }
      }
    }
 
   render() {
-    var user = { _id: this.state.userId || -1 };
+    var user = { _id: (this.state.userId || -1), name: (this.props.currUser.first_name + ' ' + this.props.currUser.last_name), avatar: this.props.currUser.image };
 
     return (
       <GiftedChat
@@ -90,8 +99,33 @@ export default class PrivateMessage extends React.Component {
   }
 }
 
+@withNavigation class NavigationBackButton extends React.Component {
+  render() {
+    return (
+      <TouchableOpacity onPress={() => this.props.navigator.replace(Router.getRoute('messages'))}>
+        <Image
+          style={{left: (Dimensions.get('window').width * 0.03), top: (Dimensions.get('window').height * 0.023), width: (Dimensions.get('window').width * 0.04), height: (Dimensions.get('window').height * 0.02)}}
+          source={require('../../node_modules/@exponent/ex-navigation/src/ExNavigationAssets').backIcon}
+        />
+      </TouchableOpacity>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {
+    currUser: state.currentUserDetails[state.currentUserDetails.length - 1],
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PrivateMessage);

@@ -22,9 +22,8 @@ export default class MatchDetails extends React.Component {
     },
   }
 
-  componentDidMount() {
-    console.log('matchdetails', this.props);
-  }
+  // componentDidMount() {
+  // }
 
   render() {
     return (
@@ -37,21 +36,21 @@ export default class MatchDetails extends React.Component {
         <View style={{flexDirection: 'row', justifyContent: 'center', top: (Dimensions.get('window').width * 0.05)}}>
           <View style={{padding: (Dimensions.get('window').width * 0.026), justifyContent: 'center', alignItems: 'center'}}>
             <Avatar
-              src={'http://images.hngn.com/data/thumbs/full/50109/650/0/0/0/arrow.png'}
+              src={this.props.route.params.currUserImg}
               size={(Dimensions.get('window').width * 0.36)}
               circle={true}
               onPress={() => console.log('pressed')}
             />
-            <Text style={{fontSize: 13.5, fontWeight: 'bold', opacity: 0.8}}>Gnus</Text>
+            <Text style={{fontSize: 13.5, fontWeight: 'bold', opacity: 0.8}}>{this.props.route.params.currUserName}</Text>
           </View>
           <View style={{padding: (Dimensions.get('window').width * 0.025), justifyContent: 'center', alignItems: 'center'}}>
             <Avatar
-              src={'http://assets.nydailynews.com/polopoly_fs/1.1369168.1370966034!/img/httpImage/image.jpg_gen/derivatives/article_750/transformers.jpg'}
+              src={this.props.route.params.image}
               size={(Dimensions.get('window').width * 0.36)}
               circle={true}
               onPress={() => console.log('pressed')}
             />
-            <Text style={{fontSize: 13.5, fontWeight: 'bold', opacity: 0.8}}>Megan</Text>
+            <Text style={{fontSize: 13.5, fontWeight: 'bold', opacity: 0.8}}>{this.props.route.params.name}</Text>
           </View>
         </View>
 
@@ -60,9 +59,9 @@ export default class MatchDetails extends React.Component {
             color={'#eee'}
           />
           <ArticleText
-            username={'Megan'}
-            text={'Feeling great! Excited to explore new places with other people!'}
-            onPress={() => console.log('pressed')}
+            username={this.props.route.params.name}
+            text={this.props.route.params.status}
+            // onPress={() => console.log('pressed')}
             style={{width: (Dimensions.get('window').width * 0.8), justifyContent: 'center'}}
           />
           <Divider

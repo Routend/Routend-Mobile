@@ -1,35 +1,28 @@
 import React from 'react';
 import {
-  ScrollView,
   StyleSheet,
-  View,
   Text,
   Dimensions,
   TextInput,
   TouchableOpacity,
+  Image,
+  AlertIOS,
 } from 'react-native';
-import { List, ListItem } from 'react-native-elements';
-import { LoginForm } from 'react-native-uikit';
 import Router from '../navigation/Router';
-import { LoginFb } from 'react-native-uikit'
 
 export default class Signup extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: ''
+    }
+  }
+
   static route = {
     navigationBar: {
       visible: false,
     },
-  }
-
-  renderRow (rowData, sectionID) {
-  return (
-    <ListItem
-      roundAvatar
-      key={sectionID}
-      title={rowData.name}
-      subtitle={rowData.subtitle}
-      avatar={{uri:rowData.avatar_url}}
-    />
-  )
   }
 
   createUser(email, password) {
@@ -48,65 +41,38 @@ export default class Signup extends React.Component {
           createdAt: time
         })
       })
-      .then((resp) => this.props.navigator.push(Router.getRoute('login')))
+      .then((resp) => this.props.navigator.pop())
     } else {
-      console.log('not a valid email');
+      AlertIOS.alert('Invalid Email', 'Please try again.');
     }
-    
   }
 
   render() {
     return (
-      <View
-        style={styles.container}>
-        <View style={{flex: 1, backgroundColor: 'black'}}></View>
-          <View style={{flex: 0.5, justifyContent: 'center', alignItems: 'center'}}><Text>Routend Logo</Text></View>
-            <View style={{flex: 1, backgroundColor: 'grey', alignItems: 'center', justifyContent: 'center'}}>
-            <Text>Create an Account</Text>
-            </View>
-          <View style={{flex: 1.8, justifyContent: 'center', alignItems: 'center'}}>
-              <LoginForm
-              loginFb={() => console.log('login with facebook')}
-              onSubmit={(email, password) => this.createUser(email, password)}
-              error={false}
-              errorMsg={'username or password incorrect'}
-              style={{marginTop: 30}}
-              radius={0}
-              inputStyle={{height: 34, width: (Dimensions.get('window').width * 0.9), fontSize: 12}}
-              usernameStyle={{bottom: -10, borderTopLeftRadius: 10, borderTopRightRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0}}
-              passwordStyle={{borderTopLeftRadius: 0, borderTopRightRadius: 0,}}
-              btnStyle={{bottom: 12,}}
-              buttonText={'Sign Up'}
-              />
-          </View>
-        <View style={{flex: 1.3, backgroundColor: 'grey', alignItems: 'center', top: 10}}>
-      </View>
-    </View>
+       <Image source={require('../assets/Signup.jpg')} style={styles.container}>
+       <TextInput
+          style={{position: 'absolute', top: (Dimensions.get('window').height * 0.598), left: (Dimensions.get('window').width * 0.23), borderWidth: 0, color: 'white', height: (Dimensions.get('window').height * 0.05), width: (Dimensions.get('window').width), fontSize: 13}}
+          onChangeText={(text) => this.setState({username: text})}
+          placeholder={'Username'}
+          placeholderTextColor={'white'}
+        />
+       <TextInput
+          style={{position: 'absolute', top: (Dimensions.get('window').height * 0.691), left: (Dimensions.get('window').width * 0.23), borderWidth: 0, color: 'white', height: (Dimensions.get('window').height * 0.05), width: (Dimensions.get('window').width), fontSize: 13}}
+          onChangeText={(text) => this.setState({password: text})}
+          placeholder={'Password'}
+          placeholderTextColor={'white'}
+          password={true}
+        />
+        <TouchableOpacity onPress={() => this.createUser(this.state.username, this.state.password) } style={{top: (Dimensions.get('window').height * 0.821), width: (Dimensions.get('window').width), height: (Dimensions.get('window').height * 0.09)}} />
+      </Image>
     );
   }
 }
 
-/*
-        <List containerStyle={{marginBottom: 20}}>
-        {
-          list.map((l, i) => (
-            <ListItem
-              roundAvatar
-              onPress={() => console.log('something')}
-              avatar={l.avatar_url}
-              key={i}
-              title={l.name}
-              subtitle={l.subtitle}
-            />
-          ))
-        }
-        </List>
-*/
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
+    width: null,
+    height: null,
+  }
 });
-
-//logout this.props.navigation.getNavigator('root').replace('login')
