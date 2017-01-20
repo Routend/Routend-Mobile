@@ -3,42 +3,22 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  AlertIOS,
 } from 'react-native';
 import { List, ListItem } from 'react-native-elements';
 import Router from '../navigation/Router';
 
-// const list2 = [
-//   {
-//     title: 'General',
-//     icon: 'adjust'
-//   },
-//   {
-//     title: 'Edit Profile',
-//     icon: 'cloud-queue',
-//     page: 'profilesettings'
-//   },
-//   {
-//     title: 'Notifications',
-//     icon: 'alarm'
-//   },
-//   {
-//     title: 'Data',
-//     icon: 'airplanemode-active'
-//   },
-//   {
-//     title: 'Help Center',
-//     icon: 'business-center'
-//   },
-//   {
-//     title: 'Report a Problem',
-//     icon: 'build'
-//   },
-// ]
-
 export default class SettingsScreen extends React.Component {
-  // state = {
-  //   fontLoaded: false,
-  // };
+  logOut() {
+    AlertIOS.alert(
+     'Logout',
+     'Are you sure you want to logout?',
+     [
+      {text: 'Yes', onPress: () => this.props.navigation.getNavigator('root').immediatelyResetStack([Router.getRoute('login')], 0)},
+       {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+     ],
+    );
+  }
 
   static route = {
     navigationBar: {
@@ -47,36 +27,12 @@ export default class SettingsScreen extends React.Component {
     },
   }
 
-  // componentDidMount() {
-  //   Font.loadAsync({
-  //     'space-mono': require('../containers/assets/fonts/SpaceMono-Regular.ttl'),
-  //   });
-  // }
-
-  renderRow (rowData, sectionID) {
-  return (
-    <ListItem
-      roundAvatar
-      key={sectionID}
-      title={rowData.name}
-      subtitle={rowData.subtitle}
-      avatar={{uri:rowData.avatar_url}}
-    />
-  )
-  }
-
   render() {
     return (
       <ScrollView
         style={styles.container}
         >
         <List>
-          <ListItem
-            key={0}
-            title={'General'}
-            leftIcon={{name: 'adjust'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
-          />
           <ListItem
             key={1}
             title={'Edit Profile'}
@@ -87,31 +43,31 @@ export default class SettingsScreen extends React.Component {
             key={2}
             title={'Notifications'}
             leftIcon={{name: 'alarm'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+            onPress={ () => {this.props.navigator.push(Router.getRoute('notification'))}  }
           />
           <ListItem
             key={3}
             title={'Help Center'}
             leftIcon={{name: 'business-center'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+            onPress={ () => {this.props.navigator.push(Router.getRoute('helpcenter'))}  }
           />
           <ListItem
             key={4}
             title={'Report a Problem'}
             leftIcon={{name: 'report-problem'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+            onPress={ () => {this.props.navigator.push(Router.getRoute('reportproblems'))}  }
           />
           <ListItem
             key={5}
             title={'Privacy Policy'}
             leftIcon={{name: 'build'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+            onPress={ () => {this.props.navigator.push(Router.getRoute('privacypolicy'))}  }
           />
           <ListItem
             key={6}
             title={'Log Out'}
             leftIcon={{name: 'cancel'}}
-            onPress={ () => {this.props.navigator.push(Router.getRoute('profilesettings'))}  }
+            onPress={ () => this.logOut() }
           />
         </List>
       </ScrollView>
