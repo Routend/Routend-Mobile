@@ -27,8 +27,8 @@ let options = {
   keyPrefix: "images/",
   bucket: "routend",
   region: "us-west-1",
-  accessKey: "API KEY",
-  secretKey: "API KEY",
+  accessKey: "AKIAJ3SMBHUDIYKY46LA",
+  secretKey: "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",
   successActionStatus: 201
 }
 
@@ -39,27 +39,18 @@ class Messages extends React.Component {
       userId: 2,
       messageList: [],
       ready: false,
-      profileImg: 'http://aios2-staging.agentimage.com/j/jmlirealtor.com/htdocs/wp-content/uploads/2014/10/default-photo.jpg',
+      profileImg: this.props.currUser.image,
     }
   }
 
   static route = {
     navigationBar: {
       visible: false,
-      // title: (<Text style={{color: 'white', fontSize: 15}}>Messages</Text>),
-      // backgroundColor: '#175785'
     },
   }
 
   componentWillMount() {
     var that = this;
-    // this.props.fetchImage(this.state.userId)
-    // .done(function() {
-    //   console.log('after fetch image inside done', that.props.currentImg);
-    //   that.setState({
-    //     profileImg: that.props.currentImg,
-    //   })
-    // })
   }
 
   componentDidMount() {
@@ -69,7 +60,7 @@ class Messages extends React.Component {
 
   fetchMsgs() {
     var that = this;
-    fetch(`http://127.0.0.1:3000/lastmessages?userId=${this.state.userId}`)
+    fetch(`http://138.197.202.196:3000/lastmessages?userId=${this.state.userId}`)
     .then((resp) => resp.json())
     .then(resp => {
       for (var i = 0; i < resp.length; i++) {
@@ -103,9 +94,9 @@ class Messages extends React.Component {
   }
 
   choosePhoto() {
+    var that = this;
     ImagePicker.showImagePicker(iOptions, (response) => {
       console.log('Response = ', response);
-
         let source;
         source = { uri: 'data:image/jpeg;base64,' + response.data };
         console.log('image source', source);
@@ -113,15 +104,22 @@ class Messages extends React.Component {
         let file = {
           // `uri` can also be a file system path (i.e. file://)
           uri: source,
-          name: (Math.random().toString(36).substr(2, 10) + ".jpg"),
+          name: (Math.random().toString(36).substr(2, 15) + ".jpg"),
           type: "image/jpg"
         }
 
         RNS3.put(file, options).then(response => {
-          if (response.status !== 201)
-            throw new Error("Failed to upload image to S3");
+          // if (response.status !== 201)
+          //   throw new Error("Failed to upload image to S3");
           console.log(response.body);
+          that.props.postImage(that.state.userId, response.body.postResponse.location)
+          .done(function() {
+            that.setState({
+              profileImg: response.body.postResponse.location
+            });
+          });
         });
+      // }
     })
   }
 
@@ -135,14 +133,14 @@ class Messages extends React.Component {
       <View
         style={styles.container}>
           <ProfileHeader
-          profileImg={'http://images.hngn.com/data/thumbs/full/50109/650/0/0/0/arrow.png'}
+          profileImg={this.state.profileImg}
           backgroundImg={'http://download.4-designer.com/files/20130905/Creative-graphics-background-vector-material-49766.jpg'}
           onPress={() => { this.choosePhoto() }}
           />
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
               <Text style={{fontSize: 15, color: '#404d5b', fontWeight: 'bold'}}>Gnus</Text>
                 <View style={{justifyContent: 'center', top: 5, marginBottom: (Dimensions.get('window').height * 0.02), alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
-                  <TouchableOpacity onPress={() => { this.props.navigator.pop() }}>
+                  <TouchableOpacity onPress={() => { this.props.navigator.replace(Router.getRoute('social')) }}>
                   <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Friend List</Text>
                   </TouchableOpacity>
                   <Text style={{color: "#D8D8D8"}}>   |   </Text>
@@ -150,18 +148,16 @@ class Messages extends React.Component {
                 </View>
             </View>
           <MessageList
-            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES {moment(this.state.messageList[0].createdAt).unix()}</Text>}
+            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES</Text>}
             items={this.state.messageList}
             // footerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>END</Text>}
-            onPress={(row) => this.props.navigator.push(Router.getRoute('privatemsg', {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}
+            onPress={(row) => this.props.navigator.replace(Router.getRoute('privatemsg', {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}
           />
       </View>
      );
     }
   }
 }
-
-// this.props.navigation.getNavigator('root').immediatelyResetStack([Router.getRoute('rootNavigation'), Router.get('messages'), Router.get('privatemsg',  {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))], 2);
 
 const styles = StyleSheet.create({
   container: {
@@ -176,7 +172,8 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     currentImg: state.getImage,
-    newImg: state.newImage
+    newImg: state.newImage,
+    currUser: state.currentUserDetails[state.currentUserDetails.length - 1],
   }
 }
 
