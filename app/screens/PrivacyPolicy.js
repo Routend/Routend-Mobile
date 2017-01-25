@@ -20,7 +20,7 @@ export default class PrivacyPolicy extends React.Component {
 
   static route = {
     navigationBar: {
-      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>HELP CENTER</Text>),
+      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>PRIVACY POLICY</Text>),
       backgroundColor: '#175785',
     },
   }
