@@ -9,24 +9,6 @@ import {
 } from 'react-native';
 import { Card, ListItem } from 'react-native-elements';
 
-const users = [
- {
-    name: 'Using Routend',
- },
- {
-    name: 'Managing Your Account',
- },
- {
-    name: 'Adding Matches',
- },
- {
-    name: 'User Suggestions',
- },
- {
-    name: 'Contacting Us',
- }
-]
-
 export default class HelpCenter extends React.Component {
   constructor(props) {
     super(props);
@@ -72,3 +54,21 @@ export default class HelpCenter extends React.Component {
     );
   }
 }
+
+const users = [
+ {
+    name: 'Using Routend',
+ },
+ {
+    name: 'Managing Your Account',
+ },
+ {
+    name: 'Adding Matches',
+ },
+ {
+    name: 'User Suggestions',
+ },
+ {
+    name: 'Contacting Us',
+ }
+]
