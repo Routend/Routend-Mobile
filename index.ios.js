@@ -1,4 +1,3 @@
-// import Exponent from 'exponent';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReduxers, compose } from 'redux';
@@ -34,7 +33,6 @@ function configureStore(initialState) {
   initialState,
   enhancer
 )
-  // return createStore(reducer, initialState, enhancer);
 }
 
 const store = configureStore({})
