@@ -12,18 +12,33 @@ import AreaSpline from './js/charts/AreaSpline';
 import Pie from './js/charts/Pie';
 import Theme from './js/theme';
 import data from './resources/data';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../actions';
 import Router from '../navigation/Router';
+import styles from '../stylesheets/GraphStyles.js';
 
-export default class StatsScreen extends React.Component {
+class StatsScreen extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       activeIndex: 0,
       spendingsPerYear: data.spendingsPerYear,
+      currStats: [],
     };
     this._onPieItemSelected = this._onPieItemSelected.bind(this);
     this._shuffle = this._shuffle.bind(this);
+  }
+
+  componentWillMount() {
+    this.state.totalHours = 0;
+    for (var i = 0; i < this.props.currLogs.length; i++) {
+      this.state.totalHours = this.state.totalHours + this.props.currLogs[i].time_spent;
+    }
+    for (var i = 0; i < this.props.currLogs.length; i++) {
+    this.state.currStats.push({number: Math.round(((this.props.currLogs[i].time_spent / this.state.totalHours) * 100)), name: this.props.currLogs[i].category})
+    }
   }
 
   static route = {
@@ -51,13 +66,13 @@ export default class StatsScreen extends React.Component {
 
     return (
       <ScrollView>
-        <View style={{justifyContent: 'center', alignItems: 'center', top: 5}}>
-          <View style={{justifyContent: 'center', top: 5, alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
+        <View style={styles.mainView}>
+          <View style={styles.bar}>
               <TouchableOpacity onPress={() => { this.props.navigator.pop() }}>
-              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Logs</Text>
+              <Text style={styles.log}>Logs</Text>
             </TouchableOpacity>
-              <Text style={{color: "#D8D8D8"}}>   |   </Text>
-              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Graphs</Text>
+              <Text style={styles.divider}>   |   </Text>
+              <Text style={styles.graph}>Graphs</Text>
           </View>
         </View>
         <View style={styles.container} >
@@ -70,7 +85,7 @@ export default class StatsScreen extends React.Component {
             colors={Theme.colors}
             width={width}
             height={height}
-            data={data.spendingsLastMonth} />
+            data={this.state.currStats} />
           <Text style={styles.chart_title}>Time Spent Per Day in a Month - {data.spendingsLastMonth[this.state.activeIndex].name} </Text>
           <AreaSpline
             width={width}
@@ -83,25 +98,15 @@ export default class StatsScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor:'whitesmoke',
-    marginTop: 10,
-  },
-  chart_title : {
-    justifyContent: 'center',
-    paddingTop: 15,
-    textAlign: 'center',
-    paddingBottom: 5,
-    paddingLeft: 5,
-    fontSize: 14,
-    backgroundColor:'white',
-    color: '#404d5b',
-    opacity: 0.8,
-    fontWeight:'bold',
-  }
-});
 
-      // <View>
-      //   <TouchableOpacity onPress={() => {console.log('route', route, 'props', props) } }><View style={{top: 16, left: 15}}><Text style={{fontSize: 12}}>Go Back</Text></View></TouchableOpacity>
-      // </View>
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {
+    currLogs: state.userStats
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StatsScreen);
