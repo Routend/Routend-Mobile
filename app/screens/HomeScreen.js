@@ -14,9 +14,8 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
 import MapView from 'react-native-maps';
 import BackgroundGeolocation from "react-native-background-geolocation";
-var moment = require('moment');
-
-// (<Image style={{height: 30, width: 100}} source={{uri: 'http://servicevirtualization.com/wp-content/uploads/2015/09/testing_graphic.jpg'}}></Image>)
+import styles from '../stylesheets/HomeStyles.js';
+import moment from 'moment';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -26,7 +25,7 @@ class HomeScreen extends React.Component {
       today: moment().format("YYYY-MM-DD"),
       currentStart: 0,
       currentEnd: 0,
-      userId: 3,
+      userId: global.id,
       position: '',
       ready: false,
       tracked: [],
@@ -39,65 +38,43 @@ class HomeScreen extends React.Component {
             },
     }
   }
+
   static route = {
     navigationBar: {
       visible: true,
-      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>Routend</Text>),
+      title: (<Image style={{height: (Dimensions.get('window').width * 0.11), width: (Dimensions.get('window').width * 0.11)}} source={require('../assets/RoutendNav.png')}></Image>),
       backgroundColor: '#175785'
     },
   }
 
   componentWillMount() {
     var that = this;
-
     BackgroundGeolocation.on('location', function(location) {
-      console.log('- Location changed test: ', location);
     });
-
     BackgroundGeolocation.on("geofence", function(geofence) {
-      console.log('geofence', geofence);
-      fetch('http://posttestserver.com/post.php?dir=yisusfence', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(geofence)
-      })
-      .then((response) => response)
-        .then((data) => {
-          console.log('post data', data);
-        })
-        .catch((error) => {
-          console.warn(error);
-        }).done();
     });
-
     BackgroundGeolocation.configure({
-      // Geolocation Config
       desiredAccuracy: 100,
       stationaryRadius: 25,
       distanceFilter: 40,
       stopTimeout: 1,
-      debug: true, // <-- enable for debug sounds & notifications
+      debug: true,
       logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+      stopOnTerminate: false,
+      startOnBoot: true,
       url: 'http://107.170.226.9:3000/coordinates?id_users=' + that.state.userId,
-      autoSync: true,         // <-- POST each location immediately to server
+      autoSync: true,
     }, function(state) {
       console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
       if (!state.enabled) {
         BackgroundGeolocation.start(function() {
-          console.log("- Start success");
         });
       }
     });
 
-    // this.state.date = moment().format("YYYY-MM-DD");
+    var that = this;
     this.state.currentStart = moment(this.state.date + ' 00').unix();
     this.state.currentEnd = moment(this.state.date + ' 24').unix();
-    var that = this;
     this._setPosition();
     this.props.fetchCoord(this.state.userId, this.state.currentStart, this.state.currentEnd)
     .done(function() {
@@ -108,9 +85,7 @@ class HomeScreen extends React.Component {
       that.state.test = that.currentData.map(function(item) {
       return item.coordinates;
       });
-      // console.log('that.test', that.test)
       that.props.fetchPlaces(that.state.userId).done(function() {
-        // that.state.tracked = [];
         for (var i = 0; i < that.props.places.length; i++) {
           that.state.tracked.push({id: that.props.places[i].id, name: that.props.places[i].name, category: that.props.places[i].category, coordinates: {latitude: that.props.places[i].lat, longitude: that.props.places[i].lng}});
             BackgroundGeolocation.addGeofence({
@@ -121,28 +96,20 @@ class HomeScreen extends React.Component {
                 notifyOnEntry: true,
                 notifyOnExit: true,
                 notifyOnDwell: false,
-                loiteringDelay: 30000,  // 30 seconds
+                loiteringDelay: 30000,
             }, function() {
-                console.log('Successfully added geofence -');
             }, function(error) {
-                console.warn("Failed to add geofence", error);
             });
         }
-        BackgroundGeolocation.getGeofences(function(geofences) {
-            for (var n= 0,len=geofences.length;n<len;n++) {
-                console.log("Geofence: ", geofences[n].identifier, geofences[n].radius, geofences[n].latitude, geofences[n].longitude);
-            }
-        });
-        // that.props.fetchLocationMatches(that.state.userId)
-        // .done(function() {
+        that.props.fetchLocationMatches(that.state.userId)
+        .done(function() {
               that.setState({
                 ready: true,
               });
               that.props.getCurrentUser(that.state.userId);
-        // });
+        });
       })
     });
-
   }
 
   setCurrentPosition(position) {
@@ -173,19 +140,17 @@ class HomeScreen extends React.Component {
         )
     } else {
       return (
-        <View style={{flex: 1, backgroundColor: '#f6f6f6'}}>
-          <View style={{flex: 10}}>
+        <View style={styles.mainView}>
+          <View style={styles.topView}>
             <MapView.Animated
                 showsUserLocation={true}
-
-                style={{flex: 13, zIndex: 0}}
+                style={styles.mapView}
                 initialRegion={this.state.currentPosition}
-                // followsUserLocation={true}
                 showsCompass={true}
                 >
-
               {this.state.tracked.map(marker =>
                 <MapView.Marker
+                pinColor={'#939393'}
                   key={marker.id}
                   coordinate={marker.coordinates}
                   title={marker.name}
@@ -194,90 +159,64 @@ class HomeScreen extends React.Component {
               )}
               {this.props.mLocations.map(marker =>
                 <MapView.Marker
-                  pinColor={'green'}
+                  pinColor={'red'}
                   key={marker.id}
                   coordinate={({latitude: marker.lat, longitude: marker.lng})}
                   title={marker.name}
                   description={'Suggested: ' + marker.category}
                 />
               )}
-
               <MapView.Polyline
               coordinates={this.state.test}
               strokeWidth={3}
               strokeColor={'#3299ff'}
               />
           </MapView.Animated>
-          <View style={{flex: 1.2, position: 'absolute', zIndex: 1, top: (Dimensions.get('window').height * 0.686)}}>
-            <View style={{justifyContent: 'center', flexDirection: 'row', backgroundColor: '#fcfcfc', width: (Dimensions.get('window').width * 0.92), height: (Dimensions.get('window').height * 0.10), borderRadius: 3, left: (Dimensions.get('window').width * 0.04), borderWidth: 0.8, borderColor: '#d3d3d3', opacity: 0.97, shadowRadius: 0.03, shadowOpacity: 0.2, shadowOffset: { width: 1, height: 1, }, }}>
-                <DatePicker
-                    style={{height: 2000, width: 118, right: 8, top: (Dimensions.get('window').height * 0.015)}}
-                    date={this.state.date}
-                    mode="date"
-                    placeholder="select date"
-                    format="YYYY-MM-DD"
-                    minDate="2016-05-01"
-                    maxDate={this.state.today}
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                      dateIcon: {
-                        position: 'absolute',
-                        left: 0,
-                        top: 8.3,
-                        marginLeft: 0,
-                        height: 23,
-                      },
-                      dateInput: {
-                        marginLeft: 32,
-                        borderWidth: 0,
-                        height: 25
-                      },
-                      dateText: {
-                        fontSize: 13, color: '#404d5b', fontWeight: 'bold'
-                      }
-                    }}
-                    onDateChange={(date) => {
-                      var that = this;
-                      var startDate = moment(date + ' 00').unix();
-                      var endDate = moment(date + ' 24').unix();
-                      console.log('startDate', startDate, 'endDate', endDate);
-                      this.state.date = date;
-                      this.props.fetchCoord(this.state.userId, startDate, endDate)
-                      .done(function() {
-                        that.currentData = [];
-                        for (var i = 0; i < that.props.lines.length; i++) {
-                          that.currentData.push({id: i, coordinates: {latitude: that.props.lines[i].lat, longitude: that.props.lines[i].lng}})
+          <View style={styles.bar}>
+            <View style={styles.barView}>
+              <DatePicker
+                style={styles.datePicker}
+                date={this.state.date}
+                mode="date"
+                placeholder="Select Date"
+                format="YYYY-MM-DD"
+                minDate="2016-05-01"
+                maxDate={this.state.today}
+                confirmBtnText="Confirm"
+                cancelBtnText="Cancel"
+                customStyles={dateDetails}
+                onDateChange={(date) => {
+                  var that = this;
+                  var startDate = moment(date + ' 00').unix();
+                  var endDate = moment(date + ' 24').unix();
+                  console.log('startDate', startDate, 'endDate', endDate);
+                  this.state.date = date;
+                  this.props.fetchCoord(this.state.userId, startDate, endDate)
+                  .done(function() {
+                    that.currentData = [];
+                    for (var i = 0; i < that.props.lines.length; i++) {
+                      that.currentData.push({id: i, coordinates: {latitude: that.props.lines[i].lat, longitude: that.props.lines[i].lng}})
+                    }
+                    var line = that.currentData.map(function(item) {
+                    return item.coordinates;
+                    });
+                    that.setState({
+                      test: line});
+                    that.props.fetchPlaces(that.state.userId).done(function() {
+                      that.state.tracked = [];
+                      for (var i = 0; i < that.props.places.length; i++) {
+                        that.state.tracked.push({id: that.props.places[i].id, name: that.props.places[i].name, category: that.props.places[i].category, coordinates: {latitude: that.props.places[i].lat, longitude: that.props.places[i].lng}});
                         }
-                        var line = that.currentData.map(function(item) {
-                        return item.coordinates;
-                        });
-                        // that.state.test = that.currentData.map(function(item) {
-                        // return item.coordinates;
-                        // });
-                        console.log('new coordinates for datepicker change', line);
-                        that.setState({
-                          test: line});
-                        // console.log('that.test', that.test)
-                        that.props.fetchPlaces(that.state.userId).done(function() {
-                          that.state.tracked = [];
-                          for (var i = 0; i < that.props.places.length; i++) {
-                            that.state.tracked.push({id: that.props.places[i].id, name: that.props.places[i].name, category: that.props.places[i].category, coordinates: {latitude: that.props.places[i].lat, longitude: that.props.places[i].lng}});
-                            // that.forceUpdate();
-                          }
-                          // that.setState({
-                          //   ready: true,
-                          // });
-                        });
                       });
-                    }}
+                    });
+                  }}
                 />
-                <View style={{top: (Dimensions.get('window').height * 0.026)}}>
-                <Text style={{fontSize: 20, fontWeight: '100',color: '#545454'}}> | </Text>
+                <View style={styles.barDivider}>
+                  <Text style={styles.barText}> | </Text>
                 </View>
-                <View style={{top: (Dimensions.get('window').height * 0.035), left: (Dimensions.get('window').width * 0.035), height: 25, width: 100}}>
-                <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('tracklocation')) }}>
-                  <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Track a Place</Text>
+                <View style={styles.trackView}>
+                  <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('tracklocation')) }}>
+                  <Text style={styles.trackText}>Track a Place</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -286,6 +225,24 @@ class HomeScreen extends React.Component {
       </View>
       );
     }
+  }
+}
+
+let dateDetails = {
+  dateIcon: {
+    position: 'absolute',
+    left: 0,
+    top: 8.3,
+    marginLeft: 0,
+    height: 23,
+  },
+  dateInput: {
+    marginLeft: 32,
+    borderWidth: 0,
+    height: 25
+  },
+  dateText: {
+    fontSize: 13, color: '#404d5b', fontWeight: 'bold'
   }
 }
 
