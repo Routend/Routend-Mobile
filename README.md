@@ -33,7 +33,7 @@ Friends/Message List/Private Messaging:
 
 Settings:
 ![settings_one](https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings1.jpg)
-<img src="https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings2.jpg" width="305">
+<img src="https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings2.jpg" width="610">
 
 ## Getting started
 
