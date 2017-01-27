@@ -13,12 +13,11 @@ class PrivateMessage extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      userId: 3,
-      userName: 'Dunstan',
+      userId: global.id,
+      userName: this.props.route.params.currName,
       otherUser: this.props.route.params.idSender,
       otherName: this.props.route.params.name,
     };
-    // this.determineUser = this.determineUser.bind(this);
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this.storeMessages = this.storeMessages.bind(this);
