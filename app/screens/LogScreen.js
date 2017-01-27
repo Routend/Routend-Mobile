@@ -14,38 +14,40 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
 import { Card, ListItem } from 'react-native-elements';
-
-const users = [
- {
-    name: 'Gym - 1.5 Hours',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
- },
- {
-    name: 'Home - 10 Hours',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
- },
- {
-    name: 'Work - 8 Hours',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
- },
- {
-    name: 'Restaurants - 2 Hours',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
- },
- {
-    name: 'Total Hours - 21.5 Hours',
-    avatar: 'https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg'
- },
-]
+import styles from '../stylesheets/LogStyles.js';
+import moment from 'moment';
 
 class LogScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      userId: global.id,
+      ready: false,
+    }
   }
 
-  // componentWillMount() {
-  //   console.log('log screen', this.props);
-  // }
+  componentWillMount() {
+    this.state.catImages = {
+      Gym: 'https://vrhotels.co.nz/quadrant-hotels-suites/wp-content/uploads/sites/2/2014/05/Gym.jpg',
+      Work: 'http://www.r-partnerslawfirm.com/IMG/arton11.jpg',
+      Restaurants: 'http://cosmopolitanaprts.com/wp-content/uploads/2016/01/restaurant-939435_960_720.jpg',
+      'Night Life': 'http://mogujatosama.rs/sites/default/files/images/Fashion-Forward-Fridays_med(1).jpg',
+      School: 'http://pacioli.crw.it/images/iacf1.jpg',
+      Home: 'https://home-security-systems.bestreviews.net/files/happy-family-home.jpg',
+      Mall: 'http://www.trbimg.com/img-55d66cc8/turbine/la-fi-century-city-mall-20150821'
+    }
+    var that = this;
+    this.props.getUserStats(this.state.userId)
+    .then(function() {
+      that.state.totalHours = 0;
+      for (var i = 0; i < that.props.currLogs.length; i++) {
+        that.state.totalHours = that.state.totalHours + that.props.currLogs[i].time_spent;
+      }
+      that.setState({
+        ready: true
+      })
+    })
+  }
 
   static route = {
     navigationBar: {
@@ -55,15 +57,19 @@ class LogScreen extends React.Component {
   }
 
   render() {
-
+    if (this.state.ready === false) {
+      return (
+        <View></View>
+      )
+    } else {
     return (
       <ScrollView>
-        <View style={{justifyContent: 'center', alignItems: 'center', top: 5}}>
-          <View style={{justifyContent: 'center', top: 5, alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
-              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Logs</Text>
-              <Text style={{color: "#D8D8D8"}}>   |   </Text>
+        <View style={styles.mainView}>
+          <View style={styles.bar}>
+              <Text style={styles.log}>Logs</Text>
+              <Text style={styles.divider}>   |   </Text>
               <TouchableOpacity onPress={() => { this.props.navigator.push(Router.getRoute('stats')) }}>
-              <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Graphs</Text>
+              <Text style={styles.graph}>Graphs</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -75,68 +81,47 @@ class LogScreen extends React.Component {
             color={'#eee'}
           />
           <View></View>
-          <Card
-          title='Gym'
-          image={{uri: 'https://vrhotels.co.nz/quadrant-hotels-suites/wp-content/uploads/sites/2/2014/05/Gym.jpg'}}>
-          <Text style={{marginBottom: 10}}>
-            You spent 1 hour at the Gym
-          </Text>
-        </Card>
-          <Card
-          title='Work'
-          image={{uri: 'http://e2b-consulting.com/wp-content/uploads/2015/03/business_6349227Lge.jpg'}}>
-          <Text style={{marginBottom: 10}}>
-            You spent 7.4 hours at Work
-          </Text>
-        </Card>
-          <Card
-          title='Restaurants'
-          image={{uri: 'http://cosmopolitanaprts.com/wp-content/uploads/2016/01/restaurant-939435_960_720.jpg'}}>
-          <Text style={{marginBottom: 10}}>
-            You spent 2 hours at Restaurants
-          </Text>
-        </Card>
+        {
+          this.props.currLogs.map((l, i) => {
+          return (
+            <Card
+              key={i}
+              title={l.category}
+              image={{uri: this.state.catImages[l.category]}}>
+              <Text style={styles.logText}>
+                You spent {(new Date(l.time_spent * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]} Hours at {l.category}
+              </Text>
+            </Card>
+              )
+            })
+          }
           <Card
           title='SUMMARY'>
           {
-          users.map((u, i) => {
+          this.props.currLogs.map((u, i) => {
           return (
             <ListItem
               key={i}
               roundAvatar
-              title={u.name}
+              title={((u.category + ' - ' + (new Date(u.time_spent * 1000)).toUTCString().match(/(\d\d:\d\d:\d\d)/)[0]) + ' Hours')}
               hideChevron={true}
-              leftIcon={{name: 'cloud-queue'}}
+              leftIcon={{name: 'access-time'}}
               />
               )
             })
           }
+          <ListItem
+            title={'Total Hours Spent - ' + (this.state.totalHours / 3600)}
+            hideChevron={true}
+            leftIcon={{name: 'favorite'}}
+            />
         </Card>
-
         </View>
       </ScrollView>
     );
+   }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor:'whitesmoke',
-    marginTop: 10,
-  },
-  chart_title : {
-    justifyContent: 'center',
-    paddingTop: 15,
-    textAlign: 'center',
-    paddingBottom: 5,
-    paddingLeft: 5,
-    fontSize: 14,
-    backgroundColor:'white',
-    color: '#404d5b',
-    opacity: 0.8,
-    fontWeight:'bold',
-  }
-});
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(ActionCreators, dispatch);
@@ -144,7 +129,7 @@ function mapDispatchToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    currLogs: state
+    currLogs: state.userStats
   }
 }
 
