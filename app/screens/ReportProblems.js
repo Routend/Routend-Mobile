@@ -14,7 +14,7 @@ export default class ReportProblems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 3,
+      userId: global.id,
       checked: false,
     }
   }
