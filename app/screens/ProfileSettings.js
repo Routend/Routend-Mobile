@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-var ImagePicker = require('react-native-image-picker');
+import ImagePicker from 'react-native-image-picker';
 import { RNS3 } from 'react-native-aws3';
 import styles from '../stylesheets/ProfileStyles.js';
 
@@ -36,7 +36,7 @@ class ProfileSettings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 3,
+      userId: global.id,
       firstName: this.props.currUser.first_name,
       lastName: this.props.currUser.last_name,
       gender: this.props.currUser.gender,
