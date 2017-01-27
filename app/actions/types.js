@@ -1,7 +1,3 @@
-export const SET_SEARCHED_RECIPES = 'SET_SEARCHED_RECIPES';
-
-export const ADD_RECIPE = 'ADD_RECIPE';
-
 export const GET_PLACES = 'GET_PLACES';
 
 export const GET_IMAGES = 'GET_IMAGES';
@@ -16,6 +12,8 @@ export const GET_PROFILE = 'GET_PROFILE';
 
 export const GET_STATUS = 'GET_STATUS';
 
+export const GET_COORDS = 'GET_COORDS';
+
 export const GET_LOCATION_MATCHES = 'GET_LOCATION_MATCHES';
 
 export const GET_LOCATION_DETAILS = 'GET_LOCATION_DETAILS';
@@ -23,3 +21,5 @@ export const GET_LOCATION_DETAILS = 'GET_LOCATION_DETAILS';
 export const GET_MATCH_DETAILS = 'GET_MATCH_DETAILS';
 
 export const GET_CURRENT_USER = 'GET_CURRENT_USER';
+
+export const GET_CURRENT_STATS = 'GET_CURRENT_STATS';
