@@ -16,7 +16,7 @@ import { RNS3 } from 'react-native-aws3';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-var ImagePicker = require('react-native-image-picker');
+import ImagePicker from 'react-native-image-picker';
 import styles from '../stylesheets/SocialStyles.js';
 
 let iOptions = {
@@ -38,7 +38,7 @@ class Social extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 3,
+      userId: global.id,
       ready: false,
       profileImg: this.props.currUser.image,
       status: this.props.currUser.status
@@ -80,7 +80,6 @@ class Social extends React.Component {
           type: "image/jpg"
         }
         RNS3.put(file, options).then(response => {
-          console.log(response.body);
           that.props.postImage(that.state.userId, response.body.postResponse.location)
           .done(function() {
             that.setState({
@@ -134,7 +133,7 @@ class Social extends React.Component {
             this.props.getMatches.map((l, i) => (
               <ListItem
                 roundAvatar
-                onPress={ () => this.props.navigator.replace(Router.getRoute('privatemsg', {name: (l.first_name + ' ' + l.last_name), idSender: l.id_users})) }
+                onPress={ () => this.props.navigator.replace(Router.getRoute('privatemsg', {currName: (this.props.currUser.first_name + ' ' + this.props.currUser.last_name), name: (l.first_name + ' ' + l.last_name), idSender: l.id_users})) }
                 avatar={l.image}
                 key={i}
                 title={l.first_name}
