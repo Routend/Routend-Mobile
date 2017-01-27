@@ -5,12 +5,15 @@ import {
   Text,
   View,
   Dimensions,
+  AlertIOS,
 } from 'react-native';
 import { Avatar, ArticleText, Button, GalleryOffset, AvatarHeader, RatingBox, DateItem } from 'react-native-uikit';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-var moment = require('moment');
+import moment from 'moment';
+import Router from '../navigation/Router';
+import styles from '../stylesheets/LocationStyles.js';
 
 class LocationDetails extends React.Component {
   constructor(props) {
@@ -25,6 +28,15 @@ class LocationDetails extends React.Component {
       title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>ACTIVITY</Text>),
       backgroundColor: '#25272A',
     },
+  }
+
+  postLocation() {
+    var that = this;
+    this.props.postLocation(this.props.route.params.currUserId, this.props.currLocation.result.name, this.props.currLocation.result.types[0], this.props.currLocation.result.place_id, this.props.currLocation.result.photos[0].photo_reference, this.props.currLocation.result.formatted_address, this.props.currLocation.result.rating, this.props.currLocation.result.geometry.location.lat, this.props.currLocation.result.geometry.location.lng)
+    .done(function() {
+      AlertIOS.alert('Success', 'Your location has been added!');
+      that.props.navigation.getNavigator('root').immediatelyResetStack([Router.getRoute('rootNavigation')], 0);
+    })
   }
 
   componentWillMount() {
@@ -58,9 +70,6 @@ class LocationDetails extends React.Component {
     })
   }
 
-  // componentDidMount() {
-  // }
-
   render() {
     if (this.state.ready == false) {
       return (
@@ -71,21 +80,19 @@ class LocationDetails extends React.Component {
       <ScrollView
         style={styles.container}
         >
-        <View style={{left: (Dimensions.get('window').width * 0.11), top: (Dimensions.get('window').height * 0.00), bottom: (Dimensions.get('window').height * 0.05)}}>
-          <Text style={{top: (Dimensions.get('window').width * 0.02), fontSize: 15, color: '#404d5b', fontWeight: 'bold'}}>{this.props.currLocation.result.name}</Text>
-          <Text style={{top: (Dimensions.get('window').width * 0.02), fontSize: 11, color: '#404d5b', fontWeight: 'bold'}}>{this.props.currLocation.result.formatted_phone_number}</Text>
-          <Text style={{top: (Dimensions.get('window').width * 0.02), fontSize: 11, color: '#404d5b', fontWeight: 'bold'}}>{this.props.currLocation.result.formatted_address}</Text>
+        <View style={styles.topView}>
+          <Text style={styles.nameView}>{this.props.currLocation.result.name}</Text>
+          <Text style={styles.phoneView}>{this.props.currLocation.result.formatted_phone_number}</Text>
+          <Text style={styles.addressView}>{this.props.currLocation.result.formatted_address}</Text>
         </View>
-
-        <View style={{top: (Dimensions.get('window').width * 0.03)}}>
+        <View style={styles.galleryView}>
           <GalleryOffset
             imagesArray={this.state.locationImages}
             display={'row'}
           />
         </View>
-
-           <View style={{alignItems: 'center', justifyContent: 'center', width: (Dimensions.get('window').width * 0.95), top: (Dimensions.get('window').height * 0.03), paddingVertical: (Dimensions.get('window').height * 0.01), borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, }, left: (Dimensions.get('window').width * 0.022)}}>
-          <Text style={{fontWeight: 'bold', opacity: 0.9}}>Opening Hours</Text>
+           <View style={styles.openingHours}>
+          <Text style={styles.openingText}>Opening Hours</Text>
           {
             this.props.currLocation.result.opening_hours.weekday_text.map((l, i) => (
               <Text style={{fontSize: 12}} key={i}>{l}
@@ -95,7 +102,7 @@ class LocationDetails extends React.Component {
           </View>
           {
             this.props.currLocation.result.reviews.map((l, i) => (
-          <View key={i} style={{width: (Dimensions.get('window').width * 0.95), top: (Dimensions.get('window').height * 0.03), borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, }, left: (Dimensions.get('window').width * 0.022)}}>
+          <View key={i} style={styles.review}>
             <AvatarHeader src={'http:' + l.profile_photo_url}
               heading={l.author_name}
               timestamp={(l.time * 1000)}
@@ -104,42 +111,38 @@ class LocationDetails extends React.Component {
               height={(Dimensions.get('window').height * 0.08)}
               gutter={10}
             />
-            <RatingBox rating={l.rating} outOf={5} style={{position: 'absolute', bottom: (Dimensions.get('window').height * 0.044), left: (Dimensions.get('window').width * 0.2)}}/>
-            <View style={{paddingHorizontal: 15, paddingBottom: 5}}>
-            <Text style={{fontSize: 13}}>{l.text}</Text>
+            <RatingBox rating={l.rating} outOf={5} style={styles.ratingBox}/>
+            <View style={styles.reviewView}>
+            <Text style={styles.reviewText}>{l.text}</Text>
             </View>
           </View>
             ))
           }
-          <View style={{top: (Dimensions.get('window').height * 0.060), left: (Dimensions.get('window').width * 0.02)}}>
+          <View style={styles.buttonView}>
           <Button
             color={'#fff'}
+            onPress={() => this.postLocation()}
             backgroundColor={'#26a69a'}
-            style={{width: (Dimensions.get('window').width * 0.96)}}
+            style={styles.buttonWidth}
             radius={5}>
             Accept
           </Button>
           <Button
             color={'#fff'}
+            onPress={() => this.props.navigator.replace(Router.getRoute('matches'))}
             backgroundColor={'#25272A'}
-            style={{width: (Dimensions.get('window').width * 0.96), bottom: (Dimensions.get('window').height * 0.01)}}
+            style={styles.buttonReject}
             radius={5}>
             Reject
           </Button>
           </View>
-          <View style={{height: (Dimensions.get('window').height * 0.14)}}>
+          <View style={styles.padding}>
           </View>
       </ScrollView>
     );
     }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
-  },
-});
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(ActionCreators, dispatch);

@@ -1,16 +1,6 @@
 import createReducer from '../lib/createReducer';
 import * as types from '../actions/types';
 
-// export const searchedRecipes = createReducer({}, {
-//   [types.SET_SEARCHED_RECIPES](state, action) {
-//     let newState = {};
-//     action.recipes.forEach( (recipe) => {
-//       newState[recipe.id] = recipe
-//     });
-//     return newState;
-//   }
-// });
-
 export const trackedPlaces = createReducer([], {
   [types.GET_PLACES](state, action) {
     return action.places;
@@ -78,8 +68,14 @@ export const currentUserDetails = createReducer([], {
   }
 });
 
+export const userStats = createReducer([], {
+  [types.GET_CURRENT_STATS](state, action) {
+    return action.stats;
+  }
+});
+
 export const testCount = createReducer([], {
-  ['TEST'](state, action) {
-    return action.test;
+  [types.GET_COORDS](state, action) {
+    return action.location;
   }
 });

@@ -15,16 +15,13 @@ export default class NotificationSettings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 3,
+      userId: global.id,
       checked: false,
     }
   }
 
   updateProfile() {
-    // this.props.postProfile(this.state.userId, this.state.firstName, this.state.lastName, this.state.gender, this.state.city, this.state.state, this.state.image, this.state.status)
-    // .done(function() {
       AlertIOS.alert('Success', 'Your notification settings have been updated!');
-    // })
   }
 
   static route = {
@@ -58,7 +55,7 @@ export default class NotificationSettings extends React.Component {
           onPress={() => this.updateProfile()}
           color={'#fff'}
           backgroundColor={'#175785'}
-          style={{position: 'absolute', top: (Dimensions.get('window').height * 0.45), width: (Dimensions.get('window').width * 0.8), left: (Dimensions.get('window').width * 0.1)}}
+          style={styles.button}
           radius={5}>
           Done
         </Button>
@@ -66,3 +63,15 @@ export default class NotificationSettings extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  button: {
+    position: 'absolute',
+    top: (Dimensions.get('window').height * 0.45),
+    width: (Dimensions.get('window').width * 0.8),
+    left: (Dimensions.get('window').width * 0.1)
+  }
+});

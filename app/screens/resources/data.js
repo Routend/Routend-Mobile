@@ -1,4 +1,3 @@
-// Just random data to display in charts
 export default {
 
   spendingsPerYear: [
@@ -29,7 +28,7 @@ export default {
   ],
 
   spendingsLastMonth: [
-    {"number":  8, "name": 'Gym'},
+    {"number": 8, "name": 'Gym'},
     {"number": 7, "name": 'Gaming'},
     {"number": 16, "name": 'Restaurants'},
     {"number": 23, "name": 'Work'},

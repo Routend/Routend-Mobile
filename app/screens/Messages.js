@@ -14,8 +14,9 @@ import { RNS3 } from 'react-native-aws3';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-var ImagePicker = require('react-native-image-picker');
-var moment = require('moment');
+import ImagePicker from 'react-native-image-picker';
+import moment from 'moment';
+import styles from '../stylesheets/MessageStyles.js';
 
 let iOptions = {
   title: 'Select Avatar',
@@ -27,8 +28,8 @@ let options = {
   keyPrefix: "images/",
   bucket: "routend",
   region: "us-west-1",
-  accessKey: "",
-  secretKey: "",
+  accessKey: "AKIAJ3SMBHUDIYKY46LA",
+  secretKey: "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",
   successActionStatus: 201
 }
 
@@ -36,7 +37,7 @@ class Messages extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 2,
+      userId: global.id,
       messageList: [],
       ready: false,
       profileImg: this.props.currUser.image,
@@ -49,13 +50,8 @@ class Messages extends React.Component {
     },
   }
 
-  componentWillMount() {
-    var that = this;
-  }
-
   componentDidMount() {
-    this.fetchMsgs()
-    console.log(this.state.messageList);
+    this.fetchMsgs();
   }
 
   fetchMsgs() {
@@ -96,22 +92,14 @@ class Messages extends React.Component {
   choosePhoto() {
     var that = this;
     ImagePicker.showImagePicker(iOptions, (response) => {
-      console.log('Response = ', response);
         let source;
         source = { uri: 'data:image/jpeg;base64,' + response.data };
-        console.log('image source', source);
-
         let file = {
-          // `uri` can also be a file system path (i.e. file://)
           uri: source,
           name: (Math.random().toString(36).substr(2, 15) + ".jpg"),
           type: "image/jpg"
         }
-
         RNS3.put(file, options).then(response => {
-          // if (response.status !== 201)
-          //   throw new Error("Failed to upload image to S3");
-          console.log(response.body);
           that.props.postImage(that.state.userId, response.body.postResponse.location)
           .done(function() {
             that.setState({
@@ -119,7 +107,6 @@ class Messages extends React.Component {
             });
           });
         });
-      // }
     })
   }
 
@@ -137,33 +124,26 @@ class Messages extends React.Component {
           backgroundImg={'http://download.4-designer.com/files/20130905/Creative-graphics-background-vector-material-49766.jpg'}
           onPress={() => { this.choosePhoto() }}
           />
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-              <Text style={{fontSize: 15, color: '#404d5b', fontWeight: 'bold'}}>Gnus</Text>
-                <View style={{justifyContent: 'center', top: 5, marginBottom: (Dimensions.get('window').height * 0.02), alignItems: 'center', flexDirection: 'row', width: 195, height: 40, borderRadius: 3, backgroundColor: '#fff', borderColor: '#D8D8D8', borderWidth: 1, shadowColor: '#D8D8D8',shadowRadius: 0.03, shadowOpacity: 0.5, shadowOffset: { width: 1, height: 1, },}}>
+          <View style={styles.mainView}>
+              <Text style={styles.name}>{this.props.currUser.first_name}</Text>
+                <View style={styles.bar}>
                   <TouchableOpacity onPress={() => { this.props.navigator.replace(Router.getRoute('social')) }}>
-                  <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Friend List</Text>
+                  <Text style={styles.friendList}>Friend List</Text>
                   </TouchableOpacity>
-                  <Text style={{color: "#D8D8D8"}}>   |   </Text>
-                  <Text style={{fontSize: 13, color: '#404d5b', fontWeight: 'bold'}}>Messages</Text>
+                  <Text style={styles.divider}>   |   </Text>
+                  <Text style={styles.messages}>Messages</Text>
                 </View>
             </View>
           <MessageList
-            headerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>CURRENT MESSAGES</Text>}
+            headerContent={<Text style={styles.header}></Text>}
             items={this.state.messageList}
-            // footerContent={<Text style={{textAlign:'center', fontSize: 8, padding: 10, backgroundColor: '#eee'}}>END</Text>}
-            onPress={(row) => this.props.navigator.replace(Router.getRoute('privatemsg', {name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}
+            onPress={(row) => this.props.navigator.replace(Router.getRoute('privatemsg', {currName: (this.props.currUser.first_name + ' ' + this.props.currUser.last_name), name: this.state.messageList[row.index].user, idSender: this.state.messageList[row.index].id}))}
           />
       </View>
      );
     }
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(ActionCreators, dispatch);

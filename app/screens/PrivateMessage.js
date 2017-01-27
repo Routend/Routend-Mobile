@@ -13,12 +13,11 @@ class PrivateMessage extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      userId: 2,
-      userName: 'D Beast',
+      userId: global.id,
+      userName: this.props.route.params.currName,
       otherUser: this.props.route.params.idSender,
       otherName: this.props.route.params.name,
     };
-    // this.determineUser = this.determineUser.bind(this);
     this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this.storeMessages = this.storeMessages.bind(this);
@@ -32,14 +31,10 @@ class PrivateMessage extends React.Component {
     this.state.roomId = [this.state.userId, this.state.otherUser].sort(function(a, b) {
       return a-b;
     }).join('-');
-    // client side, setup socket io client and room with id 1-2
-    // this.socket = SocketIOClient('http://localhost:3000');
-    // jsonp false to fix debug issues
     this.socket = SocketIOClient('http://138.197.202.196:3000', {jsonp: false});
     this.socket.emit('join', {id: this.state.roomId});
     // listen to message event for received messages.
     this.socket.on('message', this.onReceivedMessage);
-    // this.determineUser();
   }
 
   componentWillUnmount() {
@@ -61,8 +56,6 @@ class PrivateMessage extends React.Component {
     messages[0].otherId = this.state.otherUser;
     messages[0].currName = this.state.userName;
     this.socket.emit('message', messages[0]);
-    // this.socket.emit('message', {id: '1-2'}, messages[0]);
-    // this.socket.to('1-2').emit('message', messages[0]);
     this.storeMessages(messages);
   }
 
@@ -104,7 +97,7 @@ class PrivateMessage extends React.Component {
     return (
       <TouchableOpacity onPress={() => this.props.navigator.replace(Router.getRoute('messages'))}>
         <Image
-          style={{left: (Dimensions.get('window').width * 0.03), top: (Dimensions.get('window').height * 0.023), width: (Dimensions.get('window').width * 0.04), height: (Dimensions.get('window').height * 0.02)}}
+          style={styles.avatar}
           source={require('../../node_modules/@exponent/ex-navigation/src/ExNavigationAssets').backIcon}
         />
       </TouchableOpacity>
@@ -116,6 +109,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  avatar: {
+    left: (Dimensions.get('window').width * 0.03),
+    top: (Dimensions.get('window').height * 0.023),
+    width: (Dimensions.get('window').width * 0.04),
+    height: (Dimensions.get('window').height * 0.02)
+  }
 });
 
 function mapDispatchToProps(dispatch) {

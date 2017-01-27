@@ -13,14 +13,14 @@ export default class PrivacyPolicy extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: 3,
+      userId: global.id,
       checked: false,
     }
   }
 
   static route = {
     navigationBar: {
-      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>HELP CENTER</Text>),
+      title: (<Text style={{color: 'white', fontSize: 14, fontWeight: 'bold'}}>PRIVACY POLICY</Text>),
       backgroundColor: '#175785',
     },
   }
