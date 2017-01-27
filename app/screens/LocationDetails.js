@@ -11,7 +11,7 @@ import { Avatar, ArticleText, Button, GalleryOffset, AvatarHeader, RatingBox, Da
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../actions';
-var moment = require('moment');
+import moment from 'moment';
 import Router from '../navigation/Router';
 import styles from '../stylesheets/LocationStyles.js';
 
