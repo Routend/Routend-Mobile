@@ -1,6 +1,7 @@
 # Routend
 ---
-![image](https://s3-us-west-1.amazonaws.com/routend/Screenshots/Login.png)
+
+<img src="https://s3-us-west-1.amazonaws.com/routend/Screenshots/Login.png" width="305">
 
 ## Description
 Routend is a lifestyle application that keeps track of your daily route and activities. Setup places to track, such as the gym or work and get statistics based off of how long and how often you do a certain activity daily. View your statistics and see visualizations through graphs and charts. Get matched with people with similar interests in your area. Find potential friends that go to the same places and do similar activities. Locations are also suggested based off users with similar interests.
@@ -32,7 +33,7 @@ Friends/Message List/Private Messaging:
 
 Settings:
 ![settings_one](https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings1.jpg)
-![settings_two](https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings2.jpg)
+<img src="https://s3-us-west-1.amazonaws.com/routend/GitHub/Settings2.jpg" width="305">
 
 ## Getting started
 
