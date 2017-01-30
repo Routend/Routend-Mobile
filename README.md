@@ -66,6 +66,11 @@ Settings:
   $ brew install watchman
   $ npm install -g react-native-cli
   ```
+  You must also supply your own AWS S3 information for storing and uploading multimedia.
+
+  ```sh
+  Supply AWS S3 accessKey and secretKey inside SocialScreen, Messages, and ProfileSettings inside of app/screens.
+  ```
 
   2. In a new terminal window run the following command to start the application:
 
