@@ -28,8 +28,8 @@ let options = {
   keyPrefix: "images/",
   bucket: "routend",
   region: "us-west-1",
-  accessKey: "AKIAJ3SMBHUDIYKY46LA",
-  secretKey: "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",
+  accessKey: "API_KEY_HERE",
+  secretKey: "API_KEY_HERE",
   successActionStatus: 201
 }
 
