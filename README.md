@@ -87,7 +87,7 @@ Settings:
 - Redux
 - Socket-IO-Client
 - D3
-- AWS3
+- AWS S3
 
 ##### Back End:
 - Node
